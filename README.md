@@ -11,6 +11,7 @@ flows are supported:
 Configuration, and optionally cached tokens, are stored in `USER_HOME/.kc/oidc.yaml`. With support for multiple 
 configuration context.
 
+
 ## Installation
 
 ### Linux
@@ -22,6 +23,7 @@ chmod +x kc-oidc
 ```
 
 Then move `kc-oidc` to somewhere on the classpath.
+
 
 ## Configuration
 
@@ -71,6 +73,53 @@ By default, the `Access Token` is printed in it's encoded format. Use `--decode`
 `ID Token` use `--type=id`.
 
 To use a different context to the default configuration context use `--context=<context name>`.
+
+
+## Kubernetes command line tool (kubectl)
+
+`kc-oidc` can be used as a plugin to `kubectl` to enable seamless authentication to a 
+[Kubernetes cluster configured to support OpenID Connect Tokens](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) 
+for authentication.
+
+First step is to copy `kc-oidc` to `kubectl-kc` and make it available on the path. After that run the following to
+verify it works:
+
+```
+kubectl kc token
+```
+
+Configure credentials for `kubectl` to enable using `kc-oidc` to obtain tokens. For example:
+
+```
+kubectl config set-credentials kc-oidc --exec-api-version=client.authentication.k8s.io/v1 --exec-command='kubectl' --exec-arg='kc' --exec-arg='token'
+```
+
+If you want to use a specific `kc-oidc` configuration context for `kubectl` add `--exec-arg='--context=<context name>' at the
+end of the command above.
+
+`kubectl config set-credentials` doesn't currently allow specifying `interactiveMode`, so you need to edit `.kube/config`, 
+search for `kc-oidc`, and add `interactiveMode: IfAvailable` like shown below:
+
+```
+- name: kc-oidc
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      args:
+      - kc
+      - token
+      command: kubectl
+      env: null
+      provideClusterInfo: false
+      interactiveMode: IfAvailable
+```
+
+Next, you need to create a context entry that uses the previously configured credentials. For example:
+
+```
+kubectl config set-context kc-oidc --cluster=minikube --user kc-oidc
+kubectl config use-context kc-oidc
+```
 
 
 ## Build
