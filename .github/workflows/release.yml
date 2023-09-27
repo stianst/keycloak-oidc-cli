@@ -69,7 +69,7 @@ jobs:
       - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
       - run: mvn clean install -Dnative -DskipTests
       - run: |
-          cp target/kc-oidc kc-oidc-windows-amd64
-          gh release upload ${{ github.event.release.tag_name }} kc-oidc-windows-amd64
+          cp target/kc-oidc.exe kc-oidc-windows-amd64.exe
+          gh release upload ${{ github.event.release.tag_name }} kc-oidc-windows-amd64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,9 +1,6 @@
 package org.keycloak.cli.oidc;
 
-import java.awt.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +19,12 @@ public class User {
 
     public static Web web() {
         if (web == null) {
-            web = new Web();
+            String osName = System.getProperty("os.name");
+            if (osName.equals("Linux")) {
+                web = new LinuxWeb();
+            } else {
+                web = new UnsupportedWeb();
+            }
         }
         return web;
     }
@@ -37,29 +39,53 @@ public class User {
 
     }
 
-    public static class Web {
+    public interface Web {
+
+        boolean isDesktopSupported();
+
+        void browse(URI uri) throws IOException;
+    }
+
+    public static class LinuxWeb implements Web {
+
+        Boolean supported;
 
         public boolean isDesktopSupported() {
-            // return Desktop.isDesktopSupported();
-            return true;
+            if (supported == null) {
+                supported = run("xdg-open", "--version");
+            }
+            return supported;
         }
 
-        // TODO Only supports Linux at the moment, can't use Desktop.getDesktop().browse(uri) as it results in output, and
-        // doesn't work with native
         public void browse(URI uri) throws IOException {
-            String[] command = new String[] {
-              "xdg-open",
-              uri.toString()
-            };
-            Process exec = Runtime.getRuntime().exec(command);
-            try {
-                exec.waitFor(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            if (exec.exitValue() != 0) {
+            if (!run("xdg-open", uri.toString())) {
                 throw new IOException("Failed to launch browser");
             }
+        }
+    }
+
+    public static class UnsupportedWeb implements Web {
+
+        @Override
+        public boolean isDesktopSupported() {
+            return false;
+        }
+
+        @Override
+        public void browse(URI uri) throws IOException {
+            throw new IOException("Unsupported operating system");
+        }
+    }
+
+    private static boolean run(String... cmdarray) {
+        try {
+            Process exec = Runtime.getRuntime().exec(cmdarray);
+            exec.waitFor(5, TimeUnit.SECONDS);
+            return exec.exitValue() == 0;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException ioException) {
+            return false;
         }
     }
 
