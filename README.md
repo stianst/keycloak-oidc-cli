@@ -11,6 +11,18 @@ flows are supported:
 Configuration, and optionally cached tokens, are stored in `USER_HOME/.kc/oidc.yaml`. With support for multiple 
 configuration context.
 
+## Installation
+
+### Linux
+
+Run the following commands:
+```
+curl -L $(curl --silent https://api.github.com/repos/stianst/keycloak-oidc-cli/releases/latest | grep 'browser_download_url.*kc-oidc-linux-amd64' | cut -d '"' -f 4) -o kc-oidc
+chmod +x kc-oidc
+```
+
+Then move `kc-oidc` to somewhere on the classpath.
+
 ## Configuration
 
 To create a configuration context use `kc-oidc config set`, for example:
