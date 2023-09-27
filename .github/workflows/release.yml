@@ -9,40 +9,67 @@ on:
       - created
 
 jobs:
-  Build:
+  uber-jar:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
+    - uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-
-    - name: Build Uber JAR
-      run: mvn clean install -DskipTests
-
-    - name: Upload Uber JAR
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run:
+    - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+    - run: mvn clean install -DskipTests
+    - run:
         gh release upload ${{ github.event.release.tag_name }} target/kc-oidc.jar
-
-    - name: Build Native for Linux
-      run: mvn clean install -Dnative -DskipTests
-
-    - name: Upload Native for Linux
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
+
+  linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+    - run: mvn clean install -Dnative -DskipTests
+    - run: |
         cp target/kc-oidc kc-oidc-linux-amd64
         gh release upload ${{ github.event.release.tag_name }} kc-oidc-linux-amd64
-
-    - name: Publish release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run:
-        gh release edit ${{ github.event.release.tag_name }} --draft=false
+
+  macos-amd64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'
+          distribution: 'graalvm'
+      - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+      - run: mvn clean install -Dnative -DskipTests
+      - run: |
+          cp target/kc-oidc kc-oidc-macos-amd64
+          gh release upload ${{ github.event.release.tag_name }} kc-oidc-macos-amd64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  windows-amd64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'
+          distribution: 'graalvm'
+      - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+      - run: mvn clean install -Dnative -DskipTests
+      - run: |
+          cp target/kc-oidc kc-oidc-windows-amd64
+          gh release upload ${{ github.event.release.tag_name }} kc-oidc-windows-amd64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
