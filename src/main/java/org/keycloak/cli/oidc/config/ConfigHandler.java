@@ -150,11 +150,15 @@ public class ConfigHandler {
         copy.setFlow(context.getFlow());
         if (!brief) {
             copy.setClientId(context.getClientId());
-            copy.setClientSecret(context.getClientSecret().replaceAll(".", "*"));
+            copy.setClientSecret(maskSecret(context.getClientSecret()));
             copy.setUsername(context.getUsername());
-            copy.setUserPassword(context.getUserPassword().replaceAll(".", "*"));
+            copy.setUserPassword(maskSecret(context.getUserPassword()));
         }
         return copy;
+    }
+
+    private String maskSecret(String value) {
+        return value != null ? "********" : null;
     }
 
 }
