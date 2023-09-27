@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build Uber JAR
+      run: mvn clean install -DskipTests
+
+    - name: Upload Uber JAR
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        gh release upload ${{ github.event.release.tag_name }} target/kc-oidc.jar
+
+    - name: Build Native for Linux
+      run: mvn clean install -Dnative -DskipTests
+
+    - name: Upload Native for Linux
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cp target/kc-oidc kc-oidc-linux-amd64
+        gh release upload ${{ github.event.release.tag_name }} kc-oidc-linux-amd64
+
+    - name: Publish release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        gh release edit ${{ github.event.release.tag_name }} --draft=false
