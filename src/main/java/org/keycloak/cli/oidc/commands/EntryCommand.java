@@ -7,7 +7,8 @@ import picocli.CommandLine;
 @TopCommand
 @CommandLine.Command(mixinStandardHelpOptions = true, subcommands = {
         TokenCommand.class,
-        ConfigCommand.class
+        ConfigCommand.class,
+        DecodeCommand.class
 })
 public class EntryCommand {
 }

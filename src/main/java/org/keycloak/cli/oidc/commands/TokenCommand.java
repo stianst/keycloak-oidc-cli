@@ -49,7 +49,7 @@ public class TokenCommand implements Runnable {
                 ObjectMapper objectMapper = new ObjectMapper();
                 User.cli().print(objectMapper.writeValueAsString(execCredential));
             } else if (decode) {
-                String decoded = TokenParser.parse(token).decoded();
+                String decoded = TokenParser.parse(token).getClaimsDecoded();
                 User.cli().print(decoded);
             } else {
                 User.cli().print(token);

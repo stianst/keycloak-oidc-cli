@@ -4,7 +4,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
-import org.keycloak.cli.oidc.oidc.representations.JWT;
+import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 import java.util.concurrent.TimeUnit;
@@ -61,8 +61,8 @@ public class TokenManager {
         if (token == null) {
             return false;
         }
-        JWT jwt = TokenParser.parse(token).getJWT();
-        long exp = TimeUnit.SECONDS.toMillis(Long.valueOf(jwt.getExp()));
+        JwtClaims claims = TokenParser.parse(token).getClaims();
+        long exp = TimeUnit.SECONDS.toMillis(Long.valueOf(claims.getExp()));
         return exp > System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
     }
 

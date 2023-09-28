@@ -6,16 +6,14 @@ import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.UriBuilder;
 import org.keycloak.cli.oidc.http.server.BasicWebServer;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
-import org.keycloak.cli.oidc.http.server.HttpResponse;
 import org.keycloak.cli.oidc.oidc.PKCE;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
-import org.keycloak.cli.oidc.oidc.representations.JWT;
+import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URI;
 import java.util.UUID;
 
@@ -88,7 +86,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
                     .body("code_verifier", pkce.getCodeVerifier())
                     .asObject(TokenResponse.class);
 
-            JWT idToken = TokenParser.parse(tokenResponse.getIdToken()).getJWT();
+            JwtClaims idToken = TokenParser.parse(tokenResponse.getIdToken()).getClaims();
             if (!nonce.equals(idToken.getClaims().get("nonce"))) {
                 throw new OpenIDException("Invalid nonce parameter returned");
             }

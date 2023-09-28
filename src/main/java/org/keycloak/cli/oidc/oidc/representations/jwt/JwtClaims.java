@@ -1,4 +1,4 @@
-package org.keycloak.cli.oidc.oidc.representations;
+package org.keycloak.cli.oidc.oidc.representations.jwt;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @RegisterForReflection
-public class JWT {
+public class JwtClaims {
 
     @JsonProperty("iss")
     private String iss;
