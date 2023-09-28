@@ -2,13 +2,21 @@ package org.keycloak.cli.oidc;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class User {
 
     private static CLI cli;
 
     private static Web web;
+
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        User.web().browse(new URI("https://google.com"));
+    }
 
     public static CLI cli() {
         if (cli == null) {
@@ -19,13 +27,17 @@ public class User {
 
     public static Web web() {
         if (web == null) {
-            String osName = System.getProperty("os.name");
-            if (osName.equals("Linux")) {
-                web = new LinuxWeb();
-            } else if (osName.equals("Mac OS X")) {
-                web = new OSXWeb();
+            if (System.getenv().containsKey(Constants.ENV_BROWSER_CMD)) {
+                web = new CmdWeb(System.getenv(Constants.ENV_BROWSER_CMD), null);
             } else {
-                web = new UnsupportedWeb();
+                String osName = System.getProperty("os.name");
+                if (osName.equals("Linux")) {
+                    web = new LinuxWeb();
+                } else if (osName.equals("Mac OS X")) {
+                    web = new OSXWeb();
+                } else {
+                    web = new UnsupportedWeb();
+                }
             }
         }
         return web;
@@ -48,33 +60,54 @@ public class User {
         void browse(URI uri) throws IOException;
     }
 
-    public static class LinuxWeb implements Web {
-
-        Boolean supported;
-
-        public boolean isDesktopSupported() {
-            if (supported == null) {
-                supported = run("xdg-open", "--version");
-            }
-            return supported;
-        }
-
-        public void browse(URI uri) throws IOException {
-            if (!run("xdg-open", uri.toString())) {
-                throw new IOException("Failed to launch browser");
-            }
+    public static class LinuxWeb extends CmdWeb {
+        public LinuxWeb() {
+            super("xdg-open", "xdg-open --version");
         }
     }
 
-    public static class OSXWeb implements Web {
+    public static class OSXWeb extends CmdWeb {
+        public OSXWeb() {
+            super("open", null);
+        }
+    }
+
+    public static class CmdWeb implements Web {
+
+        private String cmd;
+        private String supportedCmd;
+
+        public CmdWeb(String cmd, String supportedCmd) {
+            this.cmd = cmd;
+            this.supportedCmd = supportedCmd;
+        }
 
         public boolean isDesktopSupported() {
-            return true;
+            if (supportedCmd == null) {
+                return true;
+            } else {
+                return run(supportedCmd.split(" "));
+            }
         }
 
         public void browse(URI uri) throws IOException {
-            if (!run("open", uri.toString())) {
+            ArrayList<String> cmds = new ArrayList<>();
+            Arrays.stream(cmd.split(" ")).forEach(c -> cmds.add(c));
+            cmds.add(uri.toString());
+            if (!run(cmds.toArray(new String[cmds.size()]))) {
                 throw new IOException("Failed to launch browser");
+            }
+        }
+
+        private static boolean run(String... cmdarray) {
+            try {
+                Process exec = Runtime.getRuntime().exec(cmdarray);
+                exec.waitFor(5, TimeUnit.SECONDS);
+                return exec.exitValue() == 0;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException ioException) {
+                return false;
             }
         }
     }
@@ -89,18 +122,6 @@ public class User {
         @Override
         public void browse(URI uri) throws IOException {
             throw new IOException("Unsupported operating system");
-        }
-    }
-
-    private static boolean run(String... cmdarray) {
-        try {
-            Process exec = Runtime.getRuntime().exec(cmdarray);
-            exec.waitFor(5, TimeUnit.SECONDS);
-            return exec.exitValue() == 0;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException ioException) {
-            return false;
         }
     }
 

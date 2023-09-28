@@ -68,8 +68,23 @@ kc-oidc config update --context=mycontext --client-id=null
 
 ### Environment variables
 
-* `KC_OIDC_CONF_FILE`: Specify an alternative configuration file
+#### `KC_OIDC_CONF_FILE`
 
+Specify an alternative configuration file. For example:
+
+```
+export KC_OIDC_CONF_FILE=/tmp/kc-oidc-tmp.yaml
+kc-oidc config view
+```
+
+#### `KC_OIDC_BROWSER_CMD`
+
+Specify an alternative command to open URLs in the system browser. For example:
+
+```
+export KC_OIDC_BROWSER_CMD="google-chrome --incognito"
+kc-oidc token
+```
 
 ## Fetching tokens
 
