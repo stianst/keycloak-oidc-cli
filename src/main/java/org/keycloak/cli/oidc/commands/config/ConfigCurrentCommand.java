@@ -5,7 +5,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "current")
+@CommandLine.Command(name = "current", description = "Shows the current default configuration context")
 public class ConfigCurrentCommand implements Runnable {
 
     @CommandLine.Option(names = {"--brief"}, description = "Show brief output")

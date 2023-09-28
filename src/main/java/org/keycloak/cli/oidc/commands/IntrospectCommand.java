@@ -11,7 +11,7 @@ import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "introspect")
+@CommandLine.Command(name = "introspect", description = "Introspects a token using the token introspection endpoint")
 public class IntrospectCommand implements Runnable {
 
     @CommandLine.Option(names = {"--token"}, description = "Token to introspect")

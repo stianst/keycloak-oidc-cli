@@ -5,7 +5,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "view")
+@CommandLine.Command(name = "view", description = "View all, or a specific, configuration contexts")
 public class ConfigViewCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context name")

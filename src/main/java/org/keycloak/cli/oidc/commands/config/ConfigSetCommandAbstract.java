@@ -6,7 +6,7 @@ import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "set")
+@CommandLine.Command(name = "set", description = "Creates a new configuration context")
 public class ConfigSetCommandAbstract extends AbstractConfigUpdaterCommandAbstract implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context name", required = true)

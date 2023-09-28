@@ -4,7 +4,7 @@ import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "decode")
+@CommandLine.Command(name = "decode", description = "Converts the base64 encoded JWT into a JSON document")
 public class DecodeCommand implements Runnable {
 
     @CommandLine.Option(names = {"--token"}, description = "Token type to decode", required = true)

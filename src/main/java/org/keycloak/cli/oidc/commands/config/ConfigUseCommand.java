@@ -5,7 +5,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "use")
+@CommandLine.Command(name = "use", description = "Set the current default configuration context")
 public class ConfigUseCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context name", required = true)

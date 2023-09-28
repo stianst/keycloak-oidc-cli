@@ -11,7 +11,7 @@ import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "token")
+@CommandLine.Command(name = "token", description = "Returns a token")
 public class TokenCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context to use")

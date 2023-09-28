@@ -5,7 +5,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "delete")
+@CommandLine.Command(name = "delete", description = "Deletes a configuration context")
 public class ConfigDeleteCommandAbstract extends AbstractCommonOptionsCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context name", required = true)
