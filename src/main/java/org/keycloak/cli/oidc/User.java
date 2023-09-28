@@ -22,7 +22,7 @@ public class User {
             String osName = System.getProperty("os.name");
             if (osName.equals("Linux")) {
                 web = new LinuxWeb();
-            } if (osName.equals("Mac OS X")) {
+            } else if (osName.equals("Mac OS X")) {
                 web = new OSXWeb();
             } else {
                 web = new UnsupportedWeb();
