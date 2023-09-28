@@ -1,6 +1,8 @@
 package org.keycloak.cli.oidc.http.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.keycloak.cli.oidc.http.HttpHeaders;
+import org.keycloak.cli.oidc.http.HttpMethods;
 import org.keycloak.cli.oidc.http.MimeType;
 
 import java.io.DataOutputStream;
@@ -74,9 +76,9 @@ public class Http implements AutoCloseable {
 
     private InputStream connect() throws IOException {
         createConnection();
-        connection.setRequestProperty("User-Agent", userAgent);
+        connection.setRequestProperty(HttpHeaders.USER_AGENT, userAgent);
         if (authorization != null) {
-            connection.setRequestProperty("Authorization", authorization);
+            connection.setRequestProperty(HttpHeaders.AUTHORIZATION, authorization);
         }
         sendBodyIfAvailable();
         return connection.getInputStream();
@@ -94,8 +96,9 @@ public class Http implements AutoCloseable {
         }
 
         connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setReadTimeout(1000);
         if (accept != null) {
-            connection.setRequestProperty("Accept", accept.toString());
+            connection.setRequestProperty(HttpHeaders.ACCEPT, accept.toString());
         }
     }
 
@@ -106,14 +109,15 @@ public class Http implements AutoCloseable {
 
         if (contentType.equals(MimeType.FORM)) {
             connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", contentType.toString());
+            connection.setRequestMethod(HttpMethods.POST);
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, contentType.toString());
 
             byte[] body = encodeParams(bodyParams).getBytes(StandardCharsets.UTF_8);
-            connection.setRequestProperty("Content-Length", Integer.toString(body.length));
+            connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(body.length));
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(body);
             }
+            connection.getOutputStream().close();
         }
     }
 

@@ -13,7 +13,7 @@ public class ConfigDeleteCommandTest extends AbstractConfigCommandTest {
 
     @Test
     @Launch({ "config", "delete", "--context=context3" })
-    public void testCurrent(LaunchResult result) throws ConfigException {
+    public void testDelete(LaunchResult result) throws ConfigException {
         ConfigHandler.get().reload();
         Assertions.assertEquals(null, ConfigHandler.get().getContext("context3"));
     }

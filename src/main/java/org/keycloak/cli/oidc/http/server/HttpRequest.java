@@ -1,14 +1,21 @@
 package org.keycloak.cli.oidc.http.server;
 
+import org.keycloak.cli.oidc.http.HttpHeaders;
+import org.keycloak.cli.oidc.http.HttpMethods;
 import org.keycloak.cli.oidc.http.MimeType;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {
@@ -19,19 +26,19 @@ public class HttpRequest {
     private String protocol;
     private Map<String, String> queryParams;
     private Map<String, String> headerParams;
+    private Map<String, String> bodyParams;
 
     public HttpRequest(Socket socket) throws IOException {
         this.socket = socket;
+        socket.setSoTimeout(1000);
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        HttpRequestReader reader = new HttpRequestReader(socket.getInputStream());
 
-        String firstLine = br.readLine();
+        String[] firstLine = reader.readFirstLine();
         if (firstLine != null) {
-            String[] request = firstLine.split(" ");
-
-            method = request[0];
-            path = request[1];
-            protocol = request[2];
+            method = firstLine[0];
+            path = firstLine[1];
+            protocol = firstLine[2];
 
             queryParams = new HashMap<>();
             headerParams = new HashMap<>();
@@ -47,11 +54,10 @@ public class HttpRequest {
                 }
             }
 
-            for (String header = br.readLine(); header != null && !header.equals(""); header = br.readLine()) {
-                String[] split = header.split(": ");
-                if (split.length == 2) {
-                    headerParams.put(split[0], split[1]);
-                }
+            headerParams = reader.readHeaders();
+
+            if (method.equals(HttpMethods.POST)) {
+                readBodyIfAvailable(reader);
             }
         }
     }
@@ -76,12 +82,41 @@ public class HttpRequest {
         return headerParams;
     }
 
+    public Map<String, String> getBodyParams() {
+        return bodyParams;
+    }
+
     public void ok(byte[] body, MimeType contentType) throws IOException {
         HttpResponse.ok(body, contentType).send(socket);
+        socket.close();
     }
 
     public void badRequest() throws IOException {
         HttpResponse.badRequest().send(socket);
+        socket.close();
+    }
+
+    public void serverError() throws IOException {
+        HttpResponse.serverError().send(socket);
+        socket.close();
+    }
+
+    private void readBodyIfAvailable(HttpRequestReader reader) throws IOException {
+        String contentType = getHeaderParams().get(HttpHeaders.CONTENT_TYPE);
+        if (contentType != null && contentType.startsWith(MimeType.FORM.toString())) {
+            String contentLengthString = getHeaderParams().get(HttpHeaders.CONTENT_LENGTH);
+            Integer contentLength = contentLengthString != null ? Integer.parseInt(contentLengthString) : null;
+            if (contentLength != null) {
+                bodyParams = new HashMap<>();
+                String body = reader.readBody(contentLength);
+                for (String p : body.split("&")) {
+                    String[] split = p.split("=");
+                    String key = URLDecoder.decode(split[0], StandardCharsets.UTF_8);
+                    String value = URLDecoder.decode(split[1], StandardCharsets.UTF_8);
+                    bodyParams.put(key, value);
+                }
+            }
+        }
     }
 
 }

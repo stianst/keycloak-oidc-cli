@@ -8,6 +8,8 @@ import java.util.Base64;
 
 public class PKCE {
 
+    public static final String S256 = "S256";
+
     private static final char[] ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
     private String codeChallenge;
@@ -41,11 +43,7 @@ public class PKCE {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(codeChallenge.getBytes(StandardCharsets.ISO_8859_1));
-            String encoded = Base64.getUrlEncoder().encodeToString(md.digest());
-            // TODO Not sure why this is needed, seems Keycloak removes the trailing '=', which may be wrong?
-            if (encoded.endsWith("=")) {
-                encoded = encoded.substring(0, encoded.length() - 1);
-            }
+            String encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(md.digest());
             return encoded;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

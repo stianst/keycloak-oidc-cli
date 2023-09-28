@@ -2,7 +2,6 @@ package org.keycloak.cli.oidc.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.keycloak.cli.oidc.Constants;
 import org.keycloak.cli.oidc.User;
 
 import java.io.File;
@@ -41,6 +40,10 @@ public class ConfigHandler {
             configHandler = new ConfigHandler();
         }
         return configHandler;
+    }
+
+    public static void clearInstance() {
+        configHandler = null;
     }
 
     public void reload() throws ConfigException {

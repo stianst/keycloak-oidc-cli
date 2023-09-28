@@ -27,6 +27,10 @@ public class HttpResponse {
         return new HttpResponse("400 Bad Request", null, null);
     }
 
+    public static HttpResponse serverError() {
+        return new HttpResponse("500 Internal Server Error", null, null);
+    }
+
     public void send(Socket socket) throws IOException {
         OutputStream os = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(os);

@@ -2,6 +2,7 @@ package org.keycloak.cli.oidc.oidc.flows;
 
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.http.MimeType;
+import org.keycloak.cli.oidc.oidc.OpenIDParams;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenRequestFailure;
 import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
@@ -20,7 +21,7 @@ public class TokenIntrospectionRequest extends AbstractRequest {
             return clientRequest(wellKnown.getIntrospectionEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
-                    .body("token", token)
+                    .body(OpenIDParams.TOKEN, token)
                     .asObject(TokenIntrospectionResponse.class);
         } catch (IOException e) {
             throw new TokenRequestFailure(e);

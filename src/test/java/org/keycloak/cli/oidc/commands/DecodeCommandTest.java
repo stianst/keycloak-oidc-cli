@@ -14,7 +14,7 @@ public class DecodeCommandTest {
     private static final String TEST_JWT = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJscGZmYUtZbFpjcHZKM0ZSNGpPTS15cVBwS29oQ2Y0LTNrbFVCXzlmNzN3In0.eyJleHAiOjE2OTU4NzA3NjMsImlhdCI6MTY5NTg3MDcwMywianRpIjoiZWZjMGZmM2EtZmJkYy00NGNkLWJjOWEtOWViNzA0MWI5NGU4IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJzdWIiOiJhNTE0NjljYi04ZGZiLTQzYTktOGE0MC1iNmI4ZjAyMTk0ZjgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiNzliYjU5NDQtMmJlMC00ZmVhLWFmNWItMGNiODk1MzhmN2QwIiwiYWNyIjoiMSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI3OWJiNTk0NC0yYmUwLTRmZWEtYWY1Yi0wY2I4OTUzOGY3ZDAiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIn0.MXOX9ZtExn495rnpBwU1gTQtbir5NrGkmA3u4mSNvKkB5wb51A9u1qx6fVRJSSk9QhxiW_QrG5pQ4xZVP93zKxKVG8QUW3Kfh2_lEzc6TypszbZA43puOLbxc-MgJTONmWwiQ8ueLrGBIauwZQCtXOGFrgGpn3Bzo_QeITiDnGdCCwyVkLF4uGrTMv49WcTgaMxQfDPAwoFUuDezprCzrWdjO8upZQnT4-5Gq7Og910FKjGLSR-hDiq_TJXTv9BlWwevwsYBCfyVi7oY4u-x2ae6OpTR5pvakHRDjr9btFyFCIPOZr3u9qDLKdLz7XMgWHTx_rfjlWWxtPMSeyD_YQ";
 
     @Test
-    @Launch({ "decode", "--jwt", TEST_JWT })
+    @Launch({ "decode", "--token", TEST_JWT })
     public void testDecode(LaunchResult result) throws IOException {
         Assert.expectedOutput(DecodeCommandTest.class, "testDecode", result);
     }
