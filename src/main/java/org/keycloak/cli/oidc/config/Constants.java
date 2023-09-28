@@ -1,4 +1,4 @@
-package org.keycloak.cli.oidc;
+package org.keycloak.cli.oidc.config;
 
 public interface Constants {
 

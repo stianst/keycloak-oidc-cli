@@ -1,5 +1,7 @@
 package org.keycloak.cli.oidc;
 
+import org.keycloak.cli.oidc.config.Constants;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;

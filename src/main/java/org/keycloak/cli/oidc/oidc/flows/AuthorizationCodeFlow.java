@@ -6,6 +6,10 @@ import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.UriBuilder;
 import org.keycloak.cli.oidc.http.server.BasicWebServer;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
+import org.keycloak.cli.oidc.oidc.OpenIDGrantTypes;
+import org.keycloak.cli.oidc.oidc.OpenIDParams;
+import org.keycloak.cli.oidc.oidc.OpenIDResponseTypes;
+import org.keycloak.cli.oidc.oidc.OpenIDScopes;
 import org.keycloak.cli.oidc.oidc.PKCE;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
@@ -41,14 +45,14 @@ public class AuthorizationCodeFlow extends AbstractFlow {
         PKCE pkce = PKCE.create();
 
         URI uri = UriBuilder.create(wellKnown.getAuthorizationEndpoint())
-                .query("scope", "openid")
-                .query("response_type", "code")
-                .query("client_id", context.getClientId())
-                .query("redirect_uri", redirectUri)
-                .query("state", state)
-                .query("nonce", nonce)
-                .query("code_challenge", pkce.getCodeChallenge())
-                .query("code_challenge_method", "S256")
+                .query(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                .query(OpenIDParams.RESPONSE_TYPE, OpenIDResponseTypes.CODE)
+                .query(OpenIDParams.CLIENT_ID, context.getClientId())
+                .query(OpenIDParams.REDIRECT_URI, redirectUri)
+                .query(OpenIDParams.STATE, state)
+                .query(OpenIDParams.NONCE, nonce)
+                .query(OpenIDParams.CODE_CHALLENGE, pkce.getCodeChallenge())
+                .query(OpenIDParams.CODE_CHALLENGE_METHOD, PKCE.S256)
                 .toURI();
 
         try {
@@ -66,12 +70,12 @@ public class AuthorizationCodeFlow extends AbstractFlow {
         }
 
         try {
-            if (callback.getQueryParams().containsKey("error")) {
-                throw new OpenIDException("Authentication request failed: " + callback.getQueryParams().get("error"));
+            if (callback.getQueryParams().containsKey(OpenIDParams.ERROR)) {
+                throw new OpenIDException("Authentication request failed: " + callback.getQueryParams().get(OpenIDParams.ERROR));
             }
 
-            String code = callback.getQueryParams().get("code");
-            String returnedState = callback.getQueryParams().get("state");
+            String code = callback.getQueryParams().get(OpenIDParams.CODE);
+            String returnedState = callback.getQueryParams().get(OpenIDParams.STATE);
 
             if (!state.equals(returnedState)) {
                 throw new OpenIDException("Invalid state parameter returned");
@@ -79,15 +83,15 @@ public class AuthorizationCodeFlow extends AbstractFlow {
 
             TokenResponse tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
                     .contentType(MimeType.FORM)
-                    .body("grant_type", "authorization_code")
-                    .body("code", code)
-                    .body("scope", "openid")
-                    .body("redirect_uri", redirectUri)
-                    .body("code_verifier", pkce.getCodeVerifier())
+                    .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.AUTHORIZATION_CODE)
+                    .body(OpenIDParams.CODE, code)
+                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                    .body(OpenIDParams.REDIRECT_URI, redirectUri)
+                    .body(OpenIDParams.CODE_VERIFIER, pkce.getCodeVerifier())
                     .asObject(TokenResponse.class);
 
             JwtClaims idToken = TokenParser.parse(tokenResponse.getIdToken()).getClaims();
-            if (!nonce.equals(idToken.getClaims().get("nonce"))) {
+            if (!nonce.equals(idToken.getClaims().get(OpenIDParams.NONCE))) {
                 throw new OpenIDException("Invalid nonce parameter returned");
             }
 

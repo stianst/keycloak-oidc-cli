@@ -2,6 +2,9 @@ package org.keycloak.cli.oidc.oidc.flows;
 
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.http.MimeType;
+import org.keycloak.cli.oidc.oidc.OpenIDGrantTypes;
+import org.keycloak.cli.oidc.oidc.OpenIDParams;
+import org.keycloak.cli.oidc.oidc.OpenIDScopes;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenRequestFailure;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
@@ -20,9 +23,9 @@ public class RefreshRequest extends AbstractRequest {
             return clientRequest(wellKnown.getTokenEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
-                    .body("grant_type", "refresh_token")
-                    .body("refresh_token", refreshToken)
-                    .body("scope", "openid")
+                    .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.REFRESH_TOKEN)
+                    .body(OpenIDParams.REFRESH_TOKEN, refreshToken)
+                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
                     .asObject(TokenResponse.class);
         } catch (IOException e) {
             throw new TokenRequestFailure(e);

@@ -3,7 +3,9 @@ package org.keycloak.cli.oidc.commands.config;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
-import org.keycloak.cli.oidc.Constants;
+import org.keycloak.cli.oidc.config.ConfigException;
+import org.keycloak.cli.oidc.config.ConfigHandler;
+import org.keycloak.cli.oidc.config.Constants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +32,7 @@ public abstract class AbstractConfigCommandTest {
     @AfterEach
     public void after() {
         System.getProperties().remove(Constants.SYSPROP_CONF_FILE_KEY);
+        ConfigHandler.clearInstance();
     }
 
 }

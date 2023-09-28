@@ -3,6 +3,9 @@ package org.keycloak.cli.oidc.oidc.flows;
 import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.http.MimeType;
+import org.keycloak.cli.oidc.oidc.OpenIDGrantTypes;
+import org.keycloak.cli.oidc.oidc.OpenIDParams;
+import org.keycloak.cli.oidc.oidc.OpenIDScopes;
 import org.keycloak.cli.oidc.oidc.exceptions.DeviceAuthorizationRequestFailure;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenRequestFailure;
@@ -28,7 +31,7 @@ public class DeviceFlow extends AbstractFlow {
             deviceAuthorizationResponse = clientRequest(wellKnown.getDeviceAuthorizationEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
-                    .body("scope", "openid")
+                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
                     .asObject(DeviceAuthorizationResponse.class);
         } catch (IOException e) {
             throw new DeviceAuthorizationRequestFailure(e);
@@ -59,9 +62,9 @@ public class DeviceFlow extends AbstractFlow {
             try {
                 tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
                         .contentType(MimeType.FORM)
-                        .body("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
-                        .body("device_code", deviceAuthorizationResponse.getDeviceCode())
-                        .body("scope", "openid")
+                        .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.DEVICE_CODE)
+                        .body(OpenIDParams.DEVICE_CODE, deviceAuthorizationResponse.getDeviceCode())
+                        .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
                         .asObject(TokenResponse.class);
             } catch (IOException e) {
                 throw new TokenRequestFailure(e);
