@@ -22,6 +22,8 @@ public class User {
             String osName = System.getProperty("os.name");
             if (osName.equals("Linux")) {
                 web = new LinuxWeb();
+            } if (osName.equals("Mac OS X")) {
+                web = new OSXWeb();
             } else {
                 web = new UnsupportedWeb();
             }
@@ -59,6 +61,19 @@ public class User {
 
         public void browse(URI uri) throws IOException {
             if (!run("xdg-open", uri.toString())) {
+                throw new IOException("Failed to launch browser");
+            }
+        }
+    }
+
+    public static class OSXWeb implements Web {
+
+        public boolean isDesktopSupported() {
+            return true;
+        }
+
+        public void browse(URI uri) throws IOException {
+            if (!run("open", uri.toString())) {
                 throw new IOException("Failed to launch browser");
             }
         }
