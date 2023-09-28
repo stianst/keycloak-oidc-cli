@@ -2,6 +2,7 @@ package org.keycloak.cli.oidc.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.keycloak.cli.oidc.Constants;
 import org.keycloak.cli.oidc.User;
 
 import java.io.File;
@@ -19,12 +20,18 @@ public class ConfigHandler {
     private Config config;
 
     private ConfigHandler() throws ConfigException {
-        File userHome = new File(System.getProperty("user.home"));
-        File homeDir = new File(userHome,".kc");
-        if (!homeDir.isDirectory()) {
-            homeDir.mkdir();
+        if (System.getenv().containsKey(Constants.ENV_CONF_FILE_KEY)) {
+            configFile = new File(System.getenv(Constants.ENV_CONF_FILE_KEY));
+        } else {
+            File userHome = new File(System.getProperty("user.home"));
+            File homeDir = new File(userHome, ".kc");
+            configFile = new File(homeDir, "oidc.yaml");
         }
-        configFile = new File(homeDir, "oidc.yaml");
+
+        if (!configFile.getParentFile().isDirectory()) {
+            configFile.getParentFile().mkdirs();
+        }
+
         load();
     }
 

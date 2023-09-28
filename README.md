@@ -66,6 +66,10 @@ To unset a config field use `null` as the value:
 kc-oidc config update --context=mycontext --client-id=null
 ```
 
+### Environment variables
+
+* `KC_OIDC_CONF_FILE`: Specify an alternative configuration file
+
 
 ## Fetching tokens
 
