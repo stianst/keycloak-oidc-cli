@@ -8,6 +8,8 @@ on:
     types:
       - created
 
+concurrency: release
+
 jobs:
   uber-jar:
     runs-on: ubuntu-latest
