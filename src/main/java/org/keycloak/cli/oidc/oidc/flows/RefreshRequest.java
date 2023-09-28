@@ -9,16 +9,13 @@ import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
 import java.io.IOException;
 
-public class RefreshFlow extends AbstractFlow {
+public class RefreshRequest extends AbstractRequest {
 
-    private String refreshToken;
-
-    public RefreshFlow(String refreshToken, Context configuration, WellKnown wellKnown) {
+    public RefreshRequest(Context configuration, WellKnown wellKnown) {
         super(configuration, wellKnown);
-        this.refreshToken = refreshToken;
     }
 
-    public TokenResponse execute() throws OpenIDException {
+    public TokenResponse execute(String refreshToken) throws OpenIDException {
         try {
             return clientRequest(wellKnown.getTokenEndpoint())
                     .accept(MimeType.JSON)

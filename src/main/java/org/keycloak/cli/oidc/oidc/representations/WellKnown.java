@@ -14,6 +14,8 @@ public class WellKnown {
     private String tokenEndpoint;
     @JsonProperty("device_authorization_endpoint")
     private String deviceAuthorizationEndpoint;
+    @JsonProperty("introspection_endpoint")
+    private String introspectionEndpoint;
 
     public String getAuthorizationEndpoint() {
         return authorizationEndpoint;
@@ -37,5 +39,13 @@ public class WellKnown {
 
     public void setDeviceAuthorizationEndpoint(String deviceAuthorizationEndpoint) {
         this.deviceAuthorizationEndpoint = deviceAuthorizationEndpoint;
+    }
+
+    public String getIntrospectionEndpoint() {
+        return introspectionEndpoint;
+    }
+
+    public void setIntrospectionEndpoint(String introspectionEndpoint) {
+        this.introspectionEndpoint = introspectionEndpoint;
     }
 }

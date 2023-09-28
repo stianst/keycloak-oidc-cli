@@ -9,7 +9,8 @@ import picocli.CommandLine;
 @CommandLine.Command(mixinStandardHelpOptions = true, versionProvider = QuarkusVersionProvider.class, subcommands = {
         TokenCommand.class,
         ConfigCommand.class,
-        DecodeCommand.class
+        DecodeCommand.class,
+        IntrospectCommand.class
 })
 public class EntryCommand {
 

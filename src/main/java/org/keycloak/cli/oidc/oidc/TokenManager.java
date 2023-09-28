@@ -22,6 +22,10 @@ public class TokenManager {
         this.client = new OpenIDClient(context);
     }
 
+    public OpenIDClient getClient() {
+        return client;
+    }
+
     public String getToken(String tokenType, boolean offline) throws OpenIDException, ConfigException {
         boolean refresh = tokenType.equals("refresh");
         String savedToken = getSaved(context, tokenType);

@@ -7,12 +7,12 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "decode")
 public class DecodeCommand implements Runnable {
 
-    @CommandLine.Option(names = {"--jwt"}, description = "Token type to return", required = true)
-    String jwt;
+    @CommandLine.Option(names = {"--token"}, description = "Token type to decode", required = true)
+    String token;
 
     @Override
     public void run() {
-        String decoded = TokenParser.parse(jwt).getJwtDecoded();
+        String decoded = TokenParser.parse(token).getJwtDecoded();
         User.cli().print(decoded);
     }
 

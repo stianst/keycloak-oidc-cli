@@ -8,8 +8,10 @@ import org.keycloak.cli.oidc.oidc.flows.AbstractFlow;
 import org.keycloak.cli.oidc.oidc.flows.AuthorizationCodeFlow;
 import org.keycloak.cli.oidc.oidc.flows.ClientCredentialFlow;
 import org.keycloak.cli.oidc.oidc.flows.DeviceFlow;
-import org.keycloak.cli.oidc.oidc.flows.RefreshFlow;
+import org.keycloak.cli.oidc.oidc.flows.RefreshRequest;
 import org.keycloak.cli.oidc.oidc.flows.ResourceOwnerFlow;
+import org.keycloak.cli.oidc.oidc.flows.TokenIntrospectionRequest;
+import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
@@ -57,9 +59,15 @@ public class OpenIDClient {
     }
 
     public TokenResponse refreshRequest(String refreshToken) throws OpenIDException {
-        TokenResponse tokenResponse = new RefreshFlow(refreshToken, context, wellKnown)
-                .execute();
+        TokenResponse tokenResponse = new RefreshRequest(context, wellKnown)
+                .execute(refreshToken);
         return checkError(tokenResponse);
+    }
+
+    public TokenIntrospectionResponse tokenIntrospectionRequest(String token) throws OpenIDException {
+        TokenIntrospectionResponse tokenIntrospectionResponse = new TokenIntrospectionRequest(context, wellKnown)
+                .execute(token);
+        return tokenIntrospectionResponse;
     }
 
     private TokenResponse checkError(TokenResponse tokenResponse) throws OpenIDException {
