@@ -153,6 +153,9 @@ public class ConfigHandler {
             copy.setClientSecret(maskSecret(context.getClientSecret()));
             copy.setUsername(context.getUsername());
             copy.setUserPassword(maskSecret(context.getUserPassword()));
+            copy.setRefreshToken(maskSecret(context.getRefreshToken()));
+            copy.setIdToken(maskSecret(context.getIdToken()));
+            copy.setAccessToken(maskSecret(context.getAccessToken()));
         }
         return copy;
     }
