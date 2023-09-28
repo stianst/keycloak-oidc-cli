@@ -1,16 +1,22 @@
 # Keycloak OpenID Connect CLI
 
-Keycloak OpenID Connect CLI provides a CLI interface to obtain tokens from an OpenID Connect provider. The following 
-flows are supported:
+Keycloak OpenID Connect CLI provides a CLI interface to obtain tokens from an OpenID Connect provider.
 
-* Authorization Code with PKCE
-* Client Credentials
-* Device Authorization Grant
-* Password Grant (not recommended)
+Features include:
 
-Configuration, and optionally cached tokens, are stored in `USER_HOME/.kc/oidc.yaml`. With support for multiple 
-configuration context.
+* Multiple configuration contexts to easily switch between different providers, flows, accounts, etc.
+* Supports a range of different OAuth and OpenID Connect flows
+* Decode JWT tokens into a human-readable JSON representation
+* Invoke the providers token introspection endpoint to decode and verify tokens
+* Integration with `kubectl`
+* Token cache
 
+The following flows are supported to obtain tokens:
+
+* Authorization Code with PKCE: Uses the system browser to obtain tokens
+* Client Credentials: Uses client credentials to obtain tokens for service accounts
+* Device Authorization Grant: Enables login via an external device
+* Password Grant: Uses username and password to obtain tokens. Not recommended for anything beyond development purposes. 
 
 ## Installation
 
@@ -26,6 +32,9 @@ Then move `kc-oidc` to somewhere on the classpath.
 
 
 ## Configuration
+
+Configuration is stored in `~/.kc/oidc.yaml`, which can be edited manually, but it is more convinient to use the built-in
+configuration commands.
 
 To create a configuration context use `kc-oidc config set`, for example:
 
@@ -73,6 +82,12 @@ By default, the `Access Token` is printed in it's encoded format. Use `--decode`
 `ID Token` use `--type=id`.
 
 To use a different context to the default configuration context use `--context=<context name>`.
+
+
+## Token cache
+
+By default, tokens are cached in `~/.kc/oidc.yaml` within the corresponding configuratino context. To not cache tokens
+use `--store-tokens=false` when creating or updating a configuration context. 
 
 
 ## Kubernetes command line tool (kubectl)
