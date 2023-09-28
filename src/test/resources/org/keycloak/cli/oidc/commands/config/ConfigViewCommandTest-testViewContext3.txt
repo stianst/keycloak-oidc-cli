@@ -1,0 +1,8 @@
+---
+name: "context3"
+issuer: "http://localhost:8080/context3"
+flow: "device"
+client-id: "client3"
+refresh-token: "********"
+access-token: "********"
+id-token: "********"

@@ -109,6 +109,18 @@ By default, tokens are cached in `~/.kc/oidc.yaml` within the corresponding conf
 use `--store-tokens=false` when creating or updating a configuration context. 
 
 
+## Browser support
+
+Currently, only Linux and MacOS are supported for opening URLs through the system browser, which is required by the
+authorization-code flow.
+
+For other platforms it is possible to set an environment variable to a command that can open a URL:
+
+```
+export KC_OIDC_BROWSER_CMD="google-chrome --incognito"
+```
+
+
 ## Kubernetes command line tool (kubectl)
 
 `kc-oidc` can be used as a plugin to `kubectl` to enable seamless authentication to a 

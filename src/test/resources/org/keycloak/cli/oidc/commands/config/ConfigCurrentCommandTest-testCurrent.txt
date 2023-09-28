@@ -1,0 +1,6 @@
+---
+name: "context2"
+issuer: "http://localhost:8080/context2"
+flow: "device"
+client-id: "client2"
+client-secret: "********"

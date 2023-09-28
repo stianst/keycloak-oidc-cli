@@ -3,9 +3,8 @@ package org.keycloak.cli.oidc.commands;
 import io.quarkus.test.junit.main.Launch;
 import io.quarkus.test.junit.main.LaunchResult;
 import io.quarkus.test.junit.main.QuarkusMainTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.keycloak.cli.oidc.utils.ExpectedOutput;
+import org.keycloak.cli.oidc.utils.Assert;
 
 import java.io.IOException;
 
@@ -17,8 +16,7 @@ public class DecodeCommandTest {
     @Test
     @Launch({ "decode", "--jwt", TEST_JWT })
     public void testDecode(LaunchResult result) throws IOException {
-        String expectedOutput = ExpectedOutput.getExpectedOutput(DecodeCommandTest.class, "testDecode");
-        Assertions.assertEquals(expectedOutput, result.getOutput());
+        Assert.expectedOutput(DecodeCommandTest.class, "testDecode", result);
     }
 
 }

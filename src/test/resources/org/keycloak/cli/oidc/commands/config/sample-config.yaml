@@ -1,0 +1,22 @@
+current: "context2"
+contexts:
+- name: "context1"
+  issuer: "http://localhost:8080/context1"
+  flow: "authorization-code"
+  client-id: "client1"
+  client-secret: "secret1"
+  store-tokens: true
+- name: "context2"
+  issuer: "http://localhost:8080/context2"
+  flow: "device"
+  client-id: "client2"
+  client-secret: "secret2"
+  store-tokens: true
+- name: "context3"
+  issuer: "http://localhost:8080/context3"
+  flow: "device"
+  client-id: "client3"
+  store-tokens: true
+  access-token: "accessasdf"
+  id-token: "idasdfasdf"
+  refresh-token: "refreshasdfasdfasdf"
