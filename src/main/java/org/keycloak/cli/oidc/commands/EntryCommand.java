@@ -10,7 +10,8 @@ import picocli.CommandLine;
         TokenCommand.class,
         ConfigCommand.class,
         DecodeCommand.class,
-        IntrospectCommand.class
+        IntrospectCommand.class,
+        DeleteTokensCommand.class
 })
 public class EntryCommand {
 

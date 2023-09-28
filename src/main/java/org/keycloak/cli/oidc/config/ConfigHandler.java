@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 public class ConfigHandler {
 
@@ -105,6 +106,25 @@ public class ConfigHandler {
             }
         }
         return null;
+    }
+
+    public void deleteTokens(String name) throws ConfigException {
+        Context context = getContext(name);
+        deleteTokens(context);
+        save();
+    }
+
+    public void deleteTokens() throws ConfigException {
+        for (Context context : config.getContexts()) {
+            deleteTokens(context);
+        }
+        save();
+    }
+
+    private void deleteTokens(Context context) {
+        context.setRefreshToken(null);
+        context.setAccessToken(null);
+        context.setIdToken(null);
     }
 
     public void printCurrentContext(boolean brief) throws ConfigException {
