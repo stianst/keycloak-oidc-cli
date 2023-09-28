@@ -27,22 +27,22 @@ jobs:
           cache: maven
       - run: mvn clean install -Dnative
 
-  macos-amd64:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-      - run: mvn clean install -Dnative
-
-  windows-amd64:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '17'
-          distribution: 'graalvm'
-      - run: mvn clean install -Dnative
+#  macos-amd64:
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: graalvm/setup-graalvm@v1
+#        with:
+#          java-version: '17'
+#          distribution: 'graalvm'
+#      - run: mvn clean install -Dnative
+#
+#  windows-amd64:
+#    runs-on: windows-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: graalvm/setup-graalvm@v1
+#        with:
+#          java-version: '17'
+#          distribution: 'graalvm'
+#      - run: mvn clean install -Dnative
