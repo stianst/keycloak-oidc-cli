@@ -34,7 +34,7 @@ public class ConfigHandler {
             configFile.getParentFile().mkdirs();
         }
 
-        load();
+        reload();
     }
 
     public static ConfigHandler get() throws ConfigException {
@@ -44,7 +44,7 @@ public class ConfigHandler {
         return configHandler;
     }
 
-    private void load() throws ConfigException {
+    public void reload() throws ConfigException {
         try {
             if (configFile.isFile()) {
                 config = objectMapper.readValue(configFile, Config.class);

@@ -11,11 +11,16 @@ import java.io.IOException;
 @QuarkusMainTest
 public class ConfigCurrentCommandTest extends AbstractConfigCommandTest {
 
-
     @Test
     @Launch({ "config", "current" })
     public void testCurrent(LaunchResult result) throws IOException {
         Assert.expectedOutput(ConfigCurrentCommandTest.class, "testCurrent", result);
+    }
+
+    @Test
+    @Launch({ "config", "current", "--brief" })
+    public void testBrief(LaunchResult result) throws IOException {
+        Assert.expectedOutput(ConfigCurrentCommandTest.class, "testBrief", result);
     }
 
 }

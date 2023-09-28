@@ -1,0 +1,12 @@
+---
+current: "context2"
+contexts:
+- name: "context1"
+  issuer: "http://localhost:8080/context1"
+  flow: "authorization-code"
+- name: "context2"
+  issuer: "http://localhost:8080/context2"
+  flow: "device"
+- name: "context3"
+  issuer: "http://localhost:8080/context3"
+  flow: "device"

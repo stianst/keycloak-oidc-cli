@@ -3,12 +3,12 @@ package org.keycloak.cli.oidc.commands.config;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "config", subcommands = {
-        ConfigSetCommandAbstract.class,
-        ConfigUpdateCommandAbstract.class,
+        ConfigSetCommand.class,
+        ConfigUpdateCommand.class,
         ConfigUseCommand.class,
         ConfigCurrentCommand.class,
         ConfigViewCommand.class,
-        ConfigDeleteCommandAbstract.class,
+        ConfigDeleteCommand.class,
 })
 public class ConfigCommand {
 

@@ -6,11 +6,9 @@ public class AbstractConfigUpdaterCommandAbstract extends AbstractCommonOptionsC
 
     public void update(Context context) {
         if (iss != null) {
-            context.setIssuer(iss);
+            context.setIssuer(convertToNull(iss));
         }
-        if (flow != null) {
-            context.setFlow(flow);
-        }
+        context.setFlow(flow);
         if (clientId != null) {
             context.setClientId(convertToNull(clientId));
         }

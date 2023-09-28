@@ -25,7 +25,6 @@ public abstract class AbstractConfigCommandTest {
         os.close();
 
         System.setProperty(Constants.SYSPROP_CONF_FILE_KEY, file.getAbsolutePath());
-        System.out.println(System.getProperty(Constants.SYSPROP_CONF_FILE_KEY));
     }
 
     @AfterEach

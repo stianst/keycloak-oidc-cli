@@ -23,4 +23,10 @@ public class ConfigViewCommandTest extends AbstractConfigCommandTest {
         Assert.expectedOutput(ConfigViewCommandTest.class, "testViewContext3", result);
     }
 
+    @Test
+    @Launch({ "config", "view", "--brief" })
+    public void testViewBrief(LaunchResult result) throws IOException {
+        Assert.expectedOutput(ConfigViewCommandTest.class, "testViewBrief", result);
+    }
+
 }
