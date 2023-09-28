@@ -1,6 +1,5 @@
 package org.keycloak.cli.oidc.commands.config;
 
-import org.keycloak.cli.oidc.oidc.OpenIDFlow;
 import org.keycloak.cli.oidc.config.Context;
 
 public class AbstractConfigUpdaterCommandAbstract extends AbstractCommonOptionsCommand {
@@ -10,11 +9,7 @@ public class AbstractConfigUpdaterCommandAbstract extends AbstractCommonOptionsC
             context.setIssuer(iss);
         }
         if (flow != null) {
-            if (flow.equals("null")) {
-                context.setFlow(null);
-            } else {
-                context.setFlow(OpenIDFlow.valueOf(flow.replace('-', '_').toUpperCase()));
-            }
+            context.setFlow(flow);
         }
         if (clientId != null) {
             context.setClientId(convertToNull(clientId));

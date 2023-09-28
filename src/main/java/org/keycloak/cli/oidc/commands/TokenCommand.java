@@ -2,13 +2,16 @@ package org.keycloak.cli.oidc.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.cli.oidc.User;
+import org.keycloak.cli.oidc.commands.converter.TokenTypeConverter;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
 import org.keycloak.cli.oidc.oidc.TokenManager;
 import org.keycloak.cli.oidc.oidc.TokenParser;
+import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
+import org.yaml.snakeyaml.tokens.Token;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "token", description = "Returns a token")
@@ -16,8 +19,8 @@ public class TokenCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context to use")
     String contextName;
-    @CommandLine.Option(names = {"--type"}, description = "Token type to return")
-    String tokenType;
+    @CommandLine.Option(names = {"--type"}, description = "Token type to return (access, id, refresh)", converter = TokenTypeConverter.class)
+    TokenType tokenType;
     @CommandLine.Option(names = {"--decode"}, description = "Decode token", defaultValue = "false")
     boolean decode;
     @CommandLine.Option(names = {"--offline"}, description = "Offline mode", defaultValue = "false")
@@ -32,7 +35,7 @@ public class TokenCommand implements Runnable {
         }
 
         if (tokenType == null) {
-            tokenType = kubectl ? "id" : "access";
+            tokenType = kubectl ? TokenType.ID : TokenType.ACCESS;
         }
 
         try {
@@ -59,7 +62,7 @@ public class TokenCommand implements Runnable {
         }
     }
 
-    private String getToken(String tokenType) throws OpenIDException, ConfigException {
+    private String getToken(TokenType tokenType) throws OpenIDException, ConfigException {
         ConfigHandler configHandler = ConfigHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
         TokenManager tokenManager = new TokenManager(context, configHandler);

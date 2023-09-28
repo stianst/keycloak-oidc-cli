@@ -26,7 +26,7 @@ public class TokenManager {
         return client;
     }
 
-    public String getToken(String tokenType, boolean offline) throws OpenIDException, ConfigException {
+    public String getToken(TokenType tokenType, boolean offline) throws OpenIDException, ConfigException {
         boolean refresh = tokenType.equals("refresh");
         String savedToken = getSaved(context, tokenType);
 
@@ -70,25 +70,25 @@ public class TokenManager {
         return exp > System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
     }
 
-    private String getSaved(Context context, String tokenType) {
+    private String getSaved(Context context, TokenType tokenType) {
         switch (tokenType) {
-            case "id":
+            case ID:
                 return context.getIdToken();
-            case "access":
+            case ACCESS:
                 return context.getAccessToken();
-            case "refresh":
+            case REFRESH:
                 return context.getRefreshToken();
         }
         throw new RuntimeException("Unknown token type");
     }
 
-    private String getToken(TokenResponse tokenResponse, String tokenType) {
+    private String getToken(TokenResponse tokenResponse, TokenType tokenType) {
         switch (tokenType) {
-            case "id":
+            case ID:
                 return tokenResponse.getIdToken();
-            case "access":
+            case ACCESS:
                 return tokenResponse.getAccessToken();
-            case "refresh":
+            case REFRESH:
                 return tokenResponse.getRefreshToken();
         }
         throw new RuntimeException("Unknown token type");

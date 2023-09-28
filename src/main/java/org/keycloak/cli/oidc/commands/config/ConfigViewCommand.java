@@ -13,7 +13,6 @@ public class ConfigViewCommand implements Runnable {
     @CommandLine.Option(names = {"--brief"}, description = "Show brief output")
     boolean brief;
 
-
     @Override
     public void run() {
         try {

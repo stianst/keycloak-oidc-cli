@@ -1,5 +1,7 @@
 package org.keycloak.cli.oidc.commands.config;
 
+import org.keycloak.cli.oidc.commands.converter.OpenIDFlowConverter;
+import org.keycloak.cli.oidc.oidc.OpenIDFlow;
 import picocli.CommandLine;
 
 public abstract class AbstractCommonOptionsCommand {
@@ -7,8 +9,8 @@ public abstract class AbstractCommonOptionsCommand {
     @CommandLine.Option(names = {"--issuer"}, description = "Issuer URL")
     String iss;
 
-    @CommandLine.Option(names = {"--flow"}, description = "Flow")
-    String flow;
+    @CommandLine.Option(names = {"--flow"}, description = "Flow (authorization-code, client-credential, device, resource-owner)", converter = OpenIDFlowConverter.class)
+    OpenIDFlow flow;
 
     @CommandLine.Option(names = {"--client-id"}, description = "Client ID")
     String clientId;
