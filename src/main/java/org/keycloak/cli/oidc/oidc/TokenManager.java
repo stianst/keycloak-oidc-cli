@@ -4,8 +4,8 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
-import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
+import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,10 +1,10 @@
-package org.keycloak.cli.oidc;
+package org.keycloak.cli.oidc.commands;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import picocli.CommandLine;
 
-public class QuarkusVersionProvider implements CommandLine.IVersionProvider {
+public class VersionProvider implements CommandLine.IVersionProvider {
     @Override
     public String[] getVersion() {
         Config cf = ConfigProvider.getConfig(getClass().getClassLoader());

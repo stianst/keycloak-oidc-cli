@@ -9,9 +9,9 @@ import org.keycloak.cli.oidc.http.server.HttpRequest;
 import org.keycloak.cli.oidc.oidc.PKCE;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
-import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.WellKnown;
+import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 
 import java.io.IOException;
 import java.net.URI;

@@ -11,7 +11,6 @@ import org.keycloak.cli.oidc.oidc.TokenManager;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
-import org.yaml.snakeyaml.tokens.Token;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "token", description = "Returns a token")

@@ -2,7 +2,6 @@ package org.keycloak.cli.oidc.commands;
 
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
-import org.keycloak.cli.oidc.config.Context;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "delete-tokens", description = "Deletes cached tokens")

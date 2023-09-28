@@ -5,7 +5,6 @@ import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenRequestFailure;
 import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
-import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
 import java.io.IOException;

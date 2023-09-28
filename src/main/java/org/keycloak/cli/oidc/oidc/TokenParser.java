@@ -1,9 +1,9 @@
 package org.keycloak.cli.oidc.oidc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtHeader;
-import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 
 import java.io.IOException;
 import java.util.Base64;

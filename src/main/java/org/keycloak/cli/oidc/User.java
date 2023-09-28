@@ -2,21 +2,15 @@ package org.keycloak.cli.oidc;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class User {
 
     private static CLI cli;
 
     private static Web web;
-
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        User.web().browse(new URI("https://google.com"));
-    }
 
     public static CLI cli() {
         if (cli == null) {
