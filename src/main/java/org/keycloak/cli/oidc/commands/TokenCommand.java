@@ -7,10 +7,12 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
+import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.TokenManager;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
+import org.keycloak.cli.oidc.oidc.exceptions.TokenManagerException;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "token", description = "Returns a token")
@@ -61,10 +63,10 @@ public class TokenCommand implements Runnable {
         }
     }
 
-    private String getToken(TokenType tokenType) throws OpenIDException, ConfigException {
+    private String getToken(TokenType tokenType) throws OpenIDException, ConfigException, TokenManagerException {
         ConfigHandler configHandler = ConfigHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
-        TokenManager tokenManager = new TokenManager(context, configHandler);
+        TokenManager tokenManager = new TokenManager(context, configHandler, new OpenIDClient(context));
         return tokenManager.getToken(tokenType, offline);
     }
 

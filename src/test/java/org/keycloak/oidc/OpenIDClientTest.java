@@ -29,7 +29,7 @@ public class OpenIDClientTest {
         MockWeb web = new MockWeb();
         User.setWeb(web);
 
-        Context context = createContext(issuerUrl, OpenIDFlow.AUTHORIZATION_CODE);
+        Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.AUTHORIZATION_CODE);
         OpenIDClient client = createClient(context, requestHandler);
 
         requestHandler.expectAuthzRequest();
@@ -55,7 +55,7 @@ public class OpenIDClientTest {
 
     @Test
     public void testResourceOwner(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
-        Context context = createContext(issuerUrl, OpenIDFlow.RESOURCE_OWNER);
+        Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.RESOURCE_OWNER);
         OpenIDClient client = createClient(context, requestHandler);
 
         requestHandler.expectTokenRequest();
@@ -73,7 +73,7 @@ public class OpenIDClientTest {
 
     @Test
     public void testClientCredential(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
-        Context context = createContext(issuerUrl, OpenIDFlow.CLIENT_CREDENTIAL);
+        Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.CLIENT_CREDENTIAL);
         OpenIDClient client = createClient(context, requestHandler);
 
         requestHandler.expectTokenRequest();
@@ -90,7 +90,7 @@ public class OpenIDClientTest {
 
     @Test
     public void testDevice(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
-        Context context = createContext(issuerUrl, OpenIDFlow.DEVICE);
+        Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.DEVICE);
         OpenIDClient client = createClient(context, requestHandler);
 
         requestHandler.expectDeviceAuthz();
@@ -119,17 +119,6 @@ public class OpenIDClientTest {
         OpenIDClient client = new OpenIDClient(context);
         Assertions.assertNotNull(requestHandler.pollRequest());
         return client;
-    }
-
-    private Context createContext(String issuerUrl, OpenIDFlow flow) {
-        Context context = new Context();
-        context.setIssuer(issuerUrl);
-        context.setFlow(flow);
-        context.setClientId("theclient");
-        context.setClientSecret("thesecret");
-        context.setUsername("theuser");
-        context.setUserPassword("thepassword");
-        return context;
     }
 
     private Jwt parse(String token) {

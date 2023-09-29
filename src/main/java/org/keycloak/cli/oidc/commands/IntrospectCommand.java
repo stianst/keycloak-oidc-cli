@@ -28,7 +28,7 @@ public class IntrospectCommand implements Runnable {
         try {
             ConfigHandler configHandler = ConfigHandler.get();
             Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
-            TokenManager tokenManager = new TokenManager(context, configHandler);
+            TokenManager tokenManager = new TokenManager(context, configHandler, new OpenIDClient(context));
 
             if (token == null) {
                 token = tokenManager.getToken(tokenType, offline);

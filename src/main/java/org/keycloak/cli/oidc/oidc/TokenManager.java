@@ -4,6 +4,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
+import org.keycloak.cli.oidc.oidc.exceptions.TokenManagerException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 
@@ -16,34 +17,36 @@ public class TokenManager {
 
     private OpenIDClient client;
 
-    public TokenManager(Context context, ConfigHandler configHandler) throws OpenIDException {
+    public TokenManager(Context context, ConfigHandler configHandler, OpenIDClient client) {
         this.context = context;
         this.configHandler = configHandler;
-        this.client = new OpenIDClient(context);
+        this.client = client;
     }
 
     public OpenIDClient getClient() {
         return client;
     }
 
-    public String getToken(TokenType tokenType, boolean offline) throws OpenIDException, ConfigException {
-        boolean refresh = tokenType.equals("refresh");
+    public String getToken(TokenType tokenType, boolean offline) throws OpenIDException, ConfigException, TokenManagerException {
         String savedToken = getSaved(context, tokenType);
 
         if (isValid(savedToken)) {
             return savedToken;
         } else if (offline) {
-            throw new RuntimeException("Token expired");
+            if (savedToken == null) {
+                throw new TokenManagerException("No cached token");
+            } else {
+                throw new TokenManagerException("Token expired");
+            }
         }
 
         TokenResponse tokenResponse = null;
-        if (!refresh) {
-            String refreshToken = context.getRefreshToken();
-            if (isValid(refreshToken)) {
-                try {
-                    tokenResponse = client.refreshRequest(refreshToken);
-                } catch (OpenIDException e) {
-                }
+
+        String refreshToken = context.getRefreshToken();
+        if (isValid(refreshToken)) {
+            try {
+                tokenResponse = client.refreshRequest(refreshToken);
+            } catch (OpenIDException e) {
             }
         }
 
