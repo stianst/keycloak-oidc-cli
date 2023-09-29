@@ -31,6 +31,14 @@ public class RequestHandler extends Thread {
         expectedRequests.add(new TokenRequest(fakeJwt));
     }
 
+    public void expectTokenRequest(String returnError) {
+        expectedRequests.add(new TokenErrorRequest(returnError));
+    }
+
+    public void expectDeviceAuthz() {
+        expectedRequests.add(new DeviceAuthzRequest(issuerUrl));
+    }
+
     public HttpRequest pollRequest() {
         return actualRequests.poll();
     }
@@ -43,7 +51,10 @@ public class RequestHandler extends Thread {
                 actualRequests.add(httpRequest);
 
                 Request expected = expectedRequests.poll();
-                if (!expected.getExpectedPath().equals(httpRequest.getPath())) {
+                if (expected == null) {
+                    System.err.println("Unexpected request to: " + httpRequest.getPath());
+                } else if (!expected.getExpectedPath().equals(httpRequest.getPath())) {
+                    System.err.println("Unexpected request to: " + httpRequest.getPath() + ", expected: " + expected.getExpectedPath());
                     httpRequest.serverError();
                 } else {
                     expected.processRequest(httpRequest);

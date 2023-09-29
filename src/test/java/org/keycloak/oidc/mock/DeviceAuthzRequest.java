@@ -6,21 +6,24 @@ import org.keycloak.cli.oidc.http.HttpMethods;
 import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
 import org.keycloak.cli.oidc.oidc.TokenType;
+import org.keycloak.cli.oidc.oidc.representations.DeviceAuthorizationResponse;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
+import org.keycloak.cli.oidc.oidc.representations.WellKnown;
+import org.testcontainers.shaded.com.github.dockerjava.core.exec.CreateSecretCmdExec;
 
 import java.io.IOException;
 
-public class TokenRequest implements Request {
+public class DeviceAuthzRequest implements Request {
 
-    private FakeJwt fakeJwt;
+    private String issuer;
 
-    public TokenRequest(FakeJwt fakeJwt) {
-        this.fakeJwt = fakeJwt;
+    public DeviceAuthzRequest(String issuer) {
+        this.issuer = issuer;
     }
 
     @Override
     public String getExpectedPath() {
-        return "/tokens";
+        return "/authz/device";
     }
 
     @Override
@@ -29,10 +32,12 @@ public class TokenRequest implements Request {
         Assertions.assertEquals(MimeType.FORM.toString(), httpRequest.getHeaderParams().get(HttpHeaders.CONTENT_TYPE));
         Assertions.assertEquals(MimeType.JSON.toString(), httpRequest.getHeaderParams().get(HttpHeaders.ACCEPT));
 
-        TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setAccessToken(fakeJwt.create(TokenType.ACCESS));
-        tokenResponse.setRefreshToken(fakeJwt.create(TokenType.REFRESH));
-        tokenResponse.setIdToken(fakeJwt.create(TokenType.ID));
-        httpRequest.ok(Serializer.get().toBytes(tokenResponse), MimeType.JSON);
+        DeviceAuthorizationResponse response = new DeviceAuthorizationResponse();
+        response.setDeviceCode("thedevicecode");
+        response.setInterval(1);
+        response.setVerificationUri(issuer + "/device");
+        response.setVerificationUriComplete(issuer + "/device?code=theusercode");
+        response.setUserCode("theusercode");
+        httpRequest.ok(Serializer.get().toBytes(response), MimeType.JSON);
     }
 }
