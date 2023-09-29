@@ -88,17 +88,19 @@ public class HttpRequest {
 
     public void ok(byte[] body, MimeType contentType) throws IOException {
         HttpResponse.ok(body, contentType).send(socket);
-        socket.close();
     }
 
     public void badRequest() throws IOException {
         HttpResponse.badRequest().send(socket);
-        socket.close();
+    }
+
+
+    public void found(String location) throws IOException {
+        HttpResponse.found(location).send(socket);
     }
 
     public void serverError() throws IOException {
         HttpResponse.serverError().send(socket);
-        socket.close();
     }
 
     private void readBodyIfAvailable(HttpRequestReader reader) throws IOException {

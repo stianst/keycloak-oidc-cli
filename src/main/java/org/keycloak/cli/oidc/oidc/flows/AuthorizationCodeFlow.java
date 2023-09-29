@@ -42,6 +42,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
         String state = UUID.randomUUID().toString();
         String nonce = UUID.randomUUID().toString();
         String redirectUri = "http://127.0.0.1:" + webServer.getPort() + "/callback";
+
         PKCE pkce = PKCE.create();
 
         URI uri = UriBuilder.create(wellKnown.getAuthorizationEndpoint())
@@ -83,6 +84,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
 
             TokenResponse tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
                     .contentType(MimeType.FORM)
+                    .accept(MimeType.JSON)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.AUTHORIZATION_CODE)
                     .body(OpenIDParams.CODE, code)
                     .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
@@ -104,7 +106,6 @@ public class AuthorizationCodeFlow extends AbstractFlow {
     private HttpRequest waitForCallback(BasicWebServer webServer) throws IOException {
         while (true) {
             HttpRequest httpRequest = webServer.accept();
-
             if (httpRequest.getPath().equals("/favicon.ico")) {
                 byte[] body = BasicWebServer.class.getResource("favicon.ico").openStream().readAllBytes();
                 httpRequest.ok(body, MimeType.X_ICON);

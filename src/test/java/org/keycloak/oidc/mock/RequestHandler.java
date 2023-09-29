@@ -31,12 +31,16 @@ public class RequestHandler extends Thread {
         expectedRequests.add(new TokenRequest(fakeJwt));
     }
 
-    public void expectTokenRequest(String returnError) {
+    public void expectTokenRequestFailure(String returnError) {
         expectedRequests.add(new TokenErrorRequest(returnError));
     }
 
     public void expectDeviceAuthz() {
         expectedRequests.add(new DeviceAuthzRequest(issuerUrl));
+    }
+
+    public void expectAuthzRequest() {
+        expectedRequests.add(new AuthzRequest());
     }
 
     public HttpRequest pollRequest() {

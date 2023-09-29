@@ -18,10 +18,9 @@ public class ConfigHandler {
     private Config config;
 
     private ConfigHandler() throws ConfigException {
-        if (System.getenv().containsKey(Constants.ENV_CONF_FILE_KEY)) {
-            configFile = new File(System.getenv(Constants.ENV_CONF_FILE_KEY));
-        } else if(System.getProperties().containsKey(Constants.SYSPROP_CONF_FILE_KEY)) {
-            configFile = new File(System.getProperty(Constants.SYSPROP_CONF_FILE_KEY));
+        String envConfFile = Environment.getConfFile();
+        if (envConfFile != null) {
+            configFile = new File(envConfFile);
         } else {
             File userHome = new File(System.getProperty("user.home"));
             File homeDir = new File(userHome, ".kc");

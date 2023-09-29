@@ -1,6 +1,6 @@
 package org.keycloak.cli.oidc;
 
-import org.keycloak.cli.oidc.config.Constants;
+import org.keycloak.cli.oidc.config.Environment;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,8 +23,9 @@ public class User {
 
     public static Web web() {
         if (web == null) {
-            if (System.getenv().containsKey(Constants.ENV_BROWSER_CMD)) {
-                web = new CmdWeb(System.getenv(Constants.ENV_BROWSER_CMD), null);
+            String envCmd = Environment.getBrowserCmd();
+            if (envCmd != null) {
+                web = new CmdWeb(envCmd, null);
             } else {
                 String osName = System.getProperty("os.name");
                 if (osName.equals("Linux")) {
@@ -37,6 +38,10 @@ public class User {
             }
         }
         return web;
+    }
+
+    public static void setWeb(Web web) {
+        User.web = web;
     }
 
     public static class CLI {

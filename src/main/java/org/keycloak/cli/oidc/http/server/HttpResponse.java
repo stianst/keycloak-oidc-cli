@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpResponse {
 
@@ -13,22 +15,29 @@ public class HttpResponse {
     private byte[] body;
     private MimeType contentType;
 
-    private HttpResponse(String statusLine, byte[] body, MimeType contentType) {
+    private String location;
+
+    private HttpResponse(String statusLine, byte[] body, MimeType contentType, String location) {
         this.statusLine = statusLine;
         this.body = body;
         this.contentType = contentType;
+        this.location = location;
     }
 
     public static HttpResponse ok(byte[] body, MimeType contentType) {
-        return new HttpResponse("200 OK", body, contentType);
+        return new HttpResponse("200 OK", body, contentType, null);
     }
 
     public static HttpResponse badRequest() {
-        return new HttpResponse("400 Bad Request", null, null);
+        return new HttpResponse("400 Bad Request", null, null, null);
+    }
+
+    public static HttpResponse found(String location) {
+        return new HttpResponse("302 Found", null, null, location);
     }
 
     public static HttpResponse serverError() {
-        return new HttpResponse("500 Internal Server Error", null, null);
+        return new HttpResponse("500 Internal Server Error", null, null, null);
     }
 
     public void send(Socket socket) throws IOException {
@@ -45,12 +54,18 @@ public class HttpResponse {
             pw.print("Content-Length: 0\r\n");
         }
 
+        if (location != null) {
+            pw.print("Location: " + location + "\r\n");
+        }
+
         pw.print("\r\n");
         pw.flush();
 
         if (body != null) {
             os.write(body);
         }
+
+        socket.close();
     }
 
 }
