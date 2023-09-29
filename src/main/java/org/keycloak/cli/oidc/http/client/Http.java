@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Http implements AutoCloseable {
@@ -64,6 +65,10 @@ public class Http implements AutoCloseable {
     public Http authorization(String username, String password) {
         authorization = "Basic " + new String(Base64.getEncoder().encode((username + ":" + password).getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return this;
+    }
+
+    public void send() throws IOException {
+        connect();
     }
 
     public String asString() throws IOException {

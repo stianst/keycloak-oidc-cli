@@ -1,6 +1,7 @@
 package org.keycloak.oidc.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.keycloak.cli.oidc.oidc.OpenIDParams;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
@@ -34,6 +35,11 @@ public class FakeJwt {
         claims.setIat(currentTime);
         claims.setExp(currentTime + TimeUnit.MINUTES.toSeconds(1));
         claims.getClaims().put("typ", tokenType.toString());
+
+        if (tokenType.equals(TokenType.ID) && NonceHolder.nonce != null) {
+            claims.getClaims().put(OpenIDParams.NONCE, NonceHolder.nonce);
+            NonceHolder.nonce = null;
+        }
 
         String signature = "invalid";
 

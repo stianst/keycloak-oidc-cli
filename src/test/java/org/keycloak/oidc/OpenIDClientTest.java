@@ -1,9 +1,9 @@
 package org.keycloak.oidc;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.http.HttpHeaders;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
@@ -14,6 +14,7 @@ import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
+import org.keycloak.oidc.mock.MockWeb;
 import org.keycloak.oidc.mock.OpenIDTestProviderExtension;
 import org.keycloak.oidc.mock.RequestHandler;
 
@@ -22,6 +23,35 @@ import java.util.Base64;
 
 @ExtendWith(OpenIDTestProviderExtension.class)
 public class OpenIDClientTest {
+
+    @Test
+    public void testAuthZ(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
+        MockWeb web = new MockWeb();
+        User.setWeb(web);
+
+        Context context = createContext(issuerUrl, OpenIDFlow.AUTHORIZATION_CODE);
+        OpenIDClient client = createClient(context, requestHandler);
+
+        requestHandler.expectAuthzRequest();
+        requestHandler.expectTokenRequest();
+
+        TokenResponse tokenResponse = client.tokenRequest();
+        Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
+
+        HttpRequest authzRequest = requestHandler.pollRequest();
+        String redirectUri = authzRequest.getQueryParams().get("redirect_uri");
+        Assertions.assertEquals("theclient", authzRequest.getQueryParams().get("client_id"));
+        Assertions.assertEquals("openid", authzRequest.getQueryParams().get("scope"));
+        Assertions.assertNotNull(authzRequest.getQueryParams().get("state"));
+        Assertions.assertNotNull(redirectUri);
+
+        HttpRequest tokenRequest = requestHandler.pollRequest();
+        Assertions.assertEquals("authorization_code", tokenRequest.getBodyParams().get("grant_type"));
+        Assertions.assertEquals(redirectUri, tokenRequest.getBodyParams().get("redirect_uri"));
+        assertBasicAuthorization(tokenRequest.getHeaderParams().get("Authorization"), "theclient", "thesecret");
+
+        User.setWeb(null);
+    }
 
     @Test
     public void testResourceOwner(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
@@ -64,7 +94,7 @@ public class OpenIDClientTest {
         OpenIDClient client = createClient(context, requestHandler);
 
         requestHandler.expectDeviceAuthz();
-        requestHandler.expectTokenRequest("authorization_pending");
+        requestHandler.expectTokenRequestFailure("authorization_pending");
         requestHandler.expectTokenRequest();
 
         TokenResponse tokenResponse = client.tokenRequest();
