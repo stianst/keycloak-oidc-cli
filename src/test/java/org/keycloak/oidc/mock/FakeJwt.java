@@ -54,4 +54,23 @@ public class FakeJwt {
         }
     }
 
+    public String create(TokenType tokenType, JwtClaims claims) {
+        JwtHeader header = new JwtHeader();
+        header.setKid(UUID.randomUUID().toString());
+        header.setAlg("RS256");
+        header.setTyp("JWT");
+
+        String signature = "invalid";
+
+        try {
+            Base64.Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+            String headerEncoded = encoder.encodeToString(objectMapper.writeValueAsString(header).getBytes(StandardCharsets.UTF_8));
+            String claimEncoded = encoder.encodeToString(objectMapper.writeValueAsString(claims).getBytes(StandardCharsets.UTF_8));
+            String signatureEncoded = encoder.encodeToString(signature.getBytes(StandardCharsets.UTF_8));
+            return headerEncoded + "." + claimEncoded + "." + signatureEncoded;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
