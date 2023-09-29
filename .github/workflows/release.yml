@@ -20,8 +20,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
-    - run: mvn clean install -DskipTests
+    - run: ./mvnw versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+    - run: ./mvnw clean install -DskipTests
     - run:
         gh release upload ${{ github.event.release.tag_name }} target/kc-oidc.jar
       env:
@@ -36,8 +36,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
-    - run: mvn clean install -Dnative -DskipTests
+    - run: ./mvnw versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+    - run: ./mvnw clean install -Dnative -DskipTests
     - run: |
         cp target/kc-oidc kc-oidc-linux-amd64
         gh release upload ${{ github.event.release.tag_name }} kc-oidc-linux-amd64
@@ -52,8 +52,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'graalvm'
-      - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
-      - run: mvn clean install -Dnative -DskipTests
+      - run: ./mvnw versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+      - run: ./mvnw clean install -Dnative -DskipTests
       - run: |
           cp target/kc-oidc kc-oidc-macos-amd64
           gh release upload ${{ github.event.release.tag_name }} kc-oidc-macos-amd64
@@ -68,8 +68,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'graalvm'
-      - run: mvn versions:set -DnewVersion="${{ github.event.release.tag_name }}"
-      - run: mvn clean install -Dnative -DskipTests
+      - run: ./mvnw versions:set -DnewVersion="${{ github.event.release.tag_name }}"
+      - run: ./mvnw clean install -Dnative -DskipTests
       - run: |
           cp target/kc-oidc.exe kc-oidc-windows-amd64.exe
           gh release upload ${{ github.event.release.tag_name }} kc-oidc-windows-amd64.exe
