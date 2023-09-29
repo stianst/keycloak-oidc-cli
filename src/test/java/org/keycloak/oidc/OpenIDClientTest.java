@@ -58,6 +58,32 @@ public class OpenIDClientTest {
         assertBasicAuthorization(httpRequest.getHeaderParams().get(HttpHeaders.AUTHORIZATION), "theclient", "thesecret");
     }
 
+    @Test
+    public void testDevice(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
+        Context context = createContext(issuerUrl, OpenIDFlow.DEVICE);
+        OpenIDClient client = createClient(context, requestHandler);
+
+        requestHandler.expectDeviceAuthz();
+        requestHandler.expectTokenRequest("authorization_pending");
+        requestHandler.expectTokenRequest();
+
+        TokenResponse tokenResponse = client.tokenRequest();
+        Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
+
+        HttpRequest deviceRequest = requestHandler.pollRequest();
+        assertBasicAuthorization(deviceRequest.getHeaderParams().get(HttpHeaders.AUTHORIZATION), "theclient", "thesecret");
+        Assertions.assertEquals("openid", deviceRequest.getBodyParams().get("scope"));
+
+        HttpRequest failedTokenRequest = requestHandler.pollRequest();
+        Assertions.assertNotNull(failedTokenRequest);
+
+        HttpRequest tokenRequest = requestHandler.pollRequest();
+        Assertions.assertNotNull(tokenRequest);
+        Assertions.assertEquals("urn:ietf:params:oauth:grant-type:device_code", tokenRequest.getBodyParams().get("grant_type"));
+        Assertions.assertEquals("openid", tokenRequest.getBodyParams().get("scope"));
+        assertBasicAuthorization(tokenRequest.getHeaderParams().get(HttpHeaders.AUTHORIZATION), "theclient", "thesecret");
+    }
+
     private OpenIDClient createClient(Context context, RequestHandler requestHandler) throws OpenIDException {
         requestHandler.expectWellKnown();
         OpenIDClient client = new OpenIDClient(context);

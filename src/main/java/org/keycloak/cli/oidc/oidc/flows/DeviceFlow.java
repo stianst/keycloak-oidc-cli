@@ -62,6 +62,7 @@ public class DeviceFlow extends AbstractFlow {
             try {
                 tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
                         .contentType(MimeType.FORM)
+                        .accept(MimeType.JSON)
                         .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.DEVICE_CODE)
                         .body(OpenIDParams.DEVICE_CODE, deviceAuthorizationResponse.getDeviceCode())
                         .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)

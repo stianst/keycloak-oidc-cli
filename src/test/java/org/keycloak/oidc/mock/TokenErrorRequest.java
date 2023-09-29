@@ -10,12 +10,12 @@ import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 import java.io.IOException;
 
-public class TokenRequest implements Request {
+public class TokenErrorRequest implements Request {
 
-    private FakeJwt fakeJwt;
+    private String error;
 
-    public TokenRequest(FakeJwt fakeJwt) {
-        this.fakeJwt = fakeJwt;
+    public TokenErrorRequest(String error) {
+        this.error = error;
     }
 
     @Override
@@ -30,9 +30,7 @@ public class TokenRequest implements Request {
         Assertions.assertEquals(MimeType.JSON.toString(), httpRequest.getHeaderParams().get(HttpHeaders.ACCEPT));
 
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setAccessToken(fakeJwt.create(TokenType.ACCESS));
-        tokenResponse.setRefreshToken(fakeJwt.create(TokenType.REFRESH));
-        tokenResponse.setIdToken(fakeJwt.create(TokenType.ID));
+        tokenResponse.setError(error);
         httpRequest.ok(Serializer.get().toBytes(tokenResponse), MimeType.JSON);
     }
 }

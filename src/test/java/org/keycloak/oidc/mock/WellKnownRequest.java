@@ -30,6 +30,7 @@ public class WellKnownRequest implements Request {
         WellKnown wellKnown = new WellKnown();
         wellKnown.setAuthorizationEndpoint(issuerUrl + "/authz");
         wellKnown.setTokenEndpoint(issuerUrl + "/tokens");
+        wellKnown.setDeviceAuthorizationEndpoint(issuerUrl + "/authz/device");
         httpRequest.ok(Serializer.get().toBytes(wellKnown), MimeType.JSON);
     }
 }
