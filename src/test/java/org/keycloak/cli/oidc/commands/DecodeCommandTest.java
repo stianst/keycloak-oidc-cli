@@ -1,22 +1,43 @@
 package org.keycloak.cli.oidc.commands;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.main.Launch;
 import io.quarkus.test.junit.main.LaunchResult;
+import io.quarkus.test.junit.main.QuarkusMainLauncher;
 import io.quarkus.test.junit.main.QuarkusMainTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.keycloak.cli.oidc.oidc.TokenParser;
+import org.keycloak.cli.oidc.oidc.TokenType;
+import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 import org.keycloak.cli.oidc.utils.Assert;
+import org.keycloak.oidc.mock.FakeJwt;
 
 import java.io.IOException;
 
 @QuarkusMainTest
 public class DecodeCommandTest {
 
-    private static final String TEST_JWT = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJscGZmYUtZbFpjcHZKM0ZSNGpPTS15cVBwS29oQ2Y0LTNrbFVCXzlmNzN3In0.eyJleHAiOjE2OTU4NzA3NjMsImlhdCI6MTY5NTg3MDcwMywianRpIjoiZWZjMGZmM2EtZmJkYy00NGNkLWJjOWEtOWViNzA0MWI5NGU4IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9tYXN0ZXIiLCJzdWIiOiJhNTE0NjljYi04ZGZiLTQzYTktOGE0MC1iNmI4ZjAyMTk0ZjgiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhZG1pbi1jbGkiLCJzZXNzaW9uX3N0YXRlIjoiNzliYjU5NDQtMmJlMC00ZmVhLWFmNWItMGNiODk1MzhmN2QwIiwiYWNyIjoiMSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI3OWJiNTk0NC0yYmUwLTRmZWEtYWY1Yi0wY2I4OTUzOGY3ZDAiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIn0.MXOX9ZtExn495rnpBwU1gTQtbir5NrGkmA3u4mSNvKkB5wb51A9u1qx6fVRJSSk9QhxiW_QrG5pQ4xZVP93zKxKVG8QUW3Kfh2_lEzc6TypszbZA43puOLbxc-MgJTONmWwiQ8ueLrGBIauwZQCtXOGFrgGpn3Bzo_QeITiDnGdCCwyVkLF4uGrTMv49WcTgaMxQfDPAwoFUuDezprCzrWdjO8upZQnT4-5Gq7Og910FKjGLSR-hDiq_TJXTv9BlWwevwsYBCfyVi7oY4u-x2ae6OpTR5pvakHRDjr9btFyFCIPOZr3u9qDLKdLz7XMgWHTx_rfjlWWxtPMSeyD_YQ";
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private String testJwt;
+
+    @BeforeEach
+    public void before() {
+        FakeJwt fakeJwt = new FakeJwt("http://localhost:8080", objectMapper);
+        testJwt = fakeJwt.create(TokenType.ACCESS);
+    }
 
     @Test
-    @Launch({ "decode", "--token", TEST_JWT })
-    public void testDecode(LaunchResult result) throws IOException {
-        Assert.expectedOutput(DecodeCommandTest.class, "testDecode", result);
+    public void testDecode(QuarkusMainLauncher launcher) throws IOException {
+        LaunchResult result = launcher.launch("decode", "--token", testJwt);
+
+        Jwt jwt = objectMapper.readValue(result.getOutput(), Jwt.class);
+        Assertions.assertEquals("RS256", jwt.getHeader().getAlg());
+        Assertions.assertEquals(TokenParser.parse(testJwt).getJwt().getHeader().getKid(), jwt.getHeader().getKid());
+        Assertions.assertEquals("http://localhost:8080", jwt.getClaims().getIss());
+        Assertions.assertEquals("aW52YWxpZA", jwt.getSignature());
     }
 
 }

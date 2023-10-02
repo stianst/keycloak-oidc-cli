@@ -1,8 +1,10 @@
 package org.keycloak.cli.oidc.oidc.representations.jwt;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Jwt {
 
     private JwtHeader header;

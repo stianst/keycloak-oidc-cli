@@ -2,12 +2,14 @@ package org.keycloak.cli.oidc.oidc.representations.jwt;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 @RegisterForReflection
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class JwtHeader {
 
     private String alg;
