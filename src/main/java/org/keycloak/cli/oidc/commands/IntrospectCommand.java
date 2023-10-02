@@ -40,7 +40,7 @@ public class IntrospectCommand implements Runnable {
             ObjectMapper objectMapper = new ObjectMapper();
             User.cli().print(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(tokenIntrospectionResponse));
         } catch (Exception e) {
-            Error.onError(e);
+            throw new CommandFailedException(e);
         }
     }
 

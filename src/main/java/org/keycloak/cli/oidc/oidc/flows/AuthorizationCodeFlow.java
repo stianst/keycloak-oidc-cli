@@ -6,6 +6,7 @@ import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.UriBuilder;
 import org.keycloak.cli.oidc.http.server.BasicWebServer;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
+import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.OpenIDGrantTypes;
 import org.keycloak.cli.oidc.oidc.OpenIDParams;
 import org.keycloak.cli.oidc.oidc.OpenIDResponseTypes;
@@ -14,7 +15,6 @@ import org.keycloak.cli.oidc.oidc.PKCE;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
-import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 
 import java.io.IOException;
@@ -23,8 +23,8 @@ import java.util.UUID;
 
 public class AuthorizationCodeFlow extends AbstractFlow {
 
-    public AuthorizationCodeFlow(Context context, WellKnown wellKnown) {
-        super(context, wellKnown);
+    public AuthorizationCodeFlow(Context context, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+        super(context, wellKnownSupplier);
     }
 
     public TokenResponse execute() throws OpenIDException {
@@ -45,7 +45,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
 
         PKCE pkce = PKCE.create();
 
-        URI uri = UriBuilder.create(wellKnown.getAuthorizationEndpoint())
+        URI uri = UriBuilder.create(wellKnownSupplier.get().getAuthorizationEndpoint())
                 .query(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
                 .query(OpenIDParams.RESPONSE_TYPE, OpenIDResponseTypes.CODE)
                 .query(OpenIDParams.CLIENT_ID, context.getClientId())
@@ -82,7 +82,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
                 throw new OpenIDException("Invalid state parameter returned");
             }
 
-            TokenResponse tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
+            TokenResponse tokenResponse = clientRequest(wellKnownSupplier.get().getTokenEndpoint())
                     .contentType(MimeType.FORM)
                     .accept(MimeType.JSON)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.AUTHORIZATION_CODE)

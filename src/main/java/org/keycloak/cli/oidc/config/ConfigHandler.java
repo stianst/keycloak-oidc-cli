@@ -105,17 +105,21 @@ public class ConfigHandler {
         return this;
     }
 
-    public Context getCurrentContext() {
-        return getContext(config.getCurrent());
+    public Context getCurrentContext() throws ConfigException {
+        String current = config.getCurrent();
+        if (current == null || current.isEmpty()) {
+            throw new ConfigException("Default context not set");
+        }
+        return getContext(current);
     }
 
-    public Context getContext(String name) {
+    public Context getContext(String name) throws ConfigException {
         for (Context c : config.getContexts()) {
             if (c.getName().equals(name)) {
                 return c;
             }
         }
-        return null;
+        throw new ConfigException("Context '" + name + "' not found");
     }
 
     public void deleteTokens(String name) throws ConfigException {

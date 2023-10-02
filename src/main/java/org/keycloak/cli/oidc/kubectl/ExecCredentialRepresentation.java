@@ -3,6 +3,9 @@ package org.keycloak.cli.oidc.kubectl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+/**
+ * See https://kubernetes.io/docs/reference/config-api/client-authentication.v1/
+ */
 @RegisterForReflection
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ExecCredentialRepresentation {
@@ -47,7 +50,7 @@ public class ExecCredentialRepresentation {
     @RegisterForReflection
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Spec {
-        private boolean interactive = false;
+        private boolean interactive = true;
 
         public boolean isInteractive() {
             return interactive;

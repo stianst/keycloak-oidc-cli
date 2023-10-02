@@ -4,18 +4,11 @@ import org.keycloak.cli.oidc.http.HttpHeaders;
 import org.keycloak.cli.oidc.http.HttpMethods;
 import org.keycloak.cli.oidc.http.MimeType;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {

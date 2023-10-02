@@ -4,12 +4,15 @@ import io.quarkus.test.junit.main.Launch;
 import io.quarkus.test.junit.main.LaunchResult;
 import io.quarkus.test.junit.main.QuarkusMainTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.utils.Assert;
+import org.keycloak.cli.oidc.utils.ConfigHandlerExtension;
 
 import java.io.IOException;
 
 @QuarkusMainTest
-public class ConfigViewCommandTest extends AbstractConfigCommandTest {
+@ExtendWith(ConfigHandlerExtension.class)
+public class ConfigViewCommandTest {
 
     @Test
     @Launch({ "config", "view" })

@@ -3,7 +3,6 @@ package org.keycloak.oidc.mock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.cli.oidc.oidc.OpenIDParams;
 import org.keycloak.cli.oidc.oidc.TokenType;
-import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtHeader;
 
@@ -23,12 +22,19 @@ public class FakeJwt {
     }
 
     public String create(TokenType tokenType) {
+        return create(tokenType, false);
+    }
+
+    public String create(TokenType tokenType, boolean expired) {
         JwtHeader header = new JwtHeader();
         header.setKid(UUID.randomUUID().toString());
         header.setAlg("RS256");
         header.setTyp("JWT");
 
         long currentTime = (System.currentTimeMillis() / 1000);
+        if (expired) {
+            currentTime = currentTime - TimeUnit.MINUTES.toSeconds(5);
+        }
 
         JwtClaims claims = new JwtClaims();
         claims.setIss(iss);
@@ -59,6 +65,8 @@ public class FakeJwt {
         header.setKid(UUID.randomUUID().toString());
         header.setAlg("RS256");
         header.setTyp("JWT");
+
+        claims.getClaims().put("typ", tokenType.toString());
 
         String signature = "invalid";
 

@@ -13,13 +13,14 @@ public class DeleteTokensCommand implements Runnable {
     @Override
     public void run() {
         try {
+            ConfigHandler configHandler = ConfigHandler.get();
             if (contextName != null) {
-                ConfigHandler.get().deleteTokens(contextName);
+                configHandler.deleteTokens(contextName);
             } else {
-                ConfigHandler.get().deleteTokens();
+                configHandler.deleteTokens();
             }
         } catch (ConfigException e) {
-            Error.onError(e);
+            throw new CommandFailedException(e);
         }
     }
 

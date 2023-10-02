@@ -30,12 +30,16 @@ public class OpenIDClientTest {
         User.setWeb(web);
 
         Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.AUTHORIZATION_CODE);
-        OpenIDClient client = createClient(context, requestHandler);
+        OpenIDClient client = new OpenIDClient(context);
 
+        requestHandler.expectWellKnown();
         requestHandler.expectAuthzRequest();
         requestHandler.expectTokenRequest();
 
         TokenResponse tokenResponse = client.tokenRequest();
+
+        Assertions.assertNotNull(requestHandler.pollRequest());
+
         Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
 
         HttpRequest authzRequest = requestHandler.pollRequest();
@@ -56,11 +60,15 @@ public class OpenIDClientTest {
     @Test
     public void testResourceOwner(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
         Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.RESOURCE_OWNER);
-        OpenIDClient client = createClient(context, requestHandler);
+        OpenIDClient client = new OpenIDClient(context);
 
+        requestHandler.expectWellKnown();
         requestHandler.expectTokenRequest();
 
         TokenResponse tokenResponse = client.tokenRequest();
+
+        Assertions.assertNotNull(requestHandler.pollRequest());
+
         Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
 
         HttpRequest httpRequest = requestHandler.pollRequest();
@@ -74,11 +82,15 @@ public class OpenIDClientTest {
     @Test
     public void testClientCredential(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
         Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.CLIENT_CREDENTIAL);
-        OpenIDClient client = createClient(context, requestHandler);
+        OpenIDClient client = new OpenIDClient(context);
 
+        requestHandler.expectWellKnown();
         requestHandler.expectTokenRequest();
 
         TokenResponse tokenResponse = client.tokenRequest();
+
+        Assertions.assertNotNull(requestHandler.pollRequest());
+
         Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
 
         HttpRequest httpRequest = requestHandler.pollRequest();
@@ -91,13 +103,17 @@ public class OpenIDClientTest {
     @Test
     public void testDevice(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
         Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.DEVICE);
-        OpenIDClient client = createClient(context, requestHandler);
+        OpenIDClient client = new OpenIDClient(context);
 
+        requestHandler.expectWellKnown();
         requestHandler.expectDeviceAuthz();
         requestHandler.expectTokenRequestFailure("authorization_pending");
         requestHandler.expectTokenRequest();
 
         TokenResponse tokenResponse = client.tokenRequest();
+
+        Assertions.assertNotNull(requestHandler.pollRequest());
+
         Assertions.assertEquals(TokenType.ACCESS.toString(), parse(tokenResponse.getAccessToken()).getClaims().getClaims().get("typ"));
 
         HttpRequest deviceRequest = requestHandler.pollRequest();
@@ -112,13 +128,6 @@ public class OpenIDClientTest {
         Assertions.assertEquals("urn:ietf:params:oauth:grant-type:device_code", tokenRequest.getBodyParams().get("grant_type"));
         Assertions.assertEquals("openid", tokenRequest.getBodyParams().get("scope"));
         assertBasicAuthorization(tokenRequest.getHeaderParams().get(HttpHeaders.AUTHORIZATION), "theclient", "thesecret");
-    }
-
-    private OpenIDClient createClient(Context context, RequestHandler requestHandler) throws OpenIDException {
-        requestHandler.expectWellKnown();
-        OpenIDClient client = new OpenIDClient(context);
-        Assertions.assertNotNull(requestHandler.pollRequest());
-        return client;
     }
 
     private Jwt parse(String token) {
