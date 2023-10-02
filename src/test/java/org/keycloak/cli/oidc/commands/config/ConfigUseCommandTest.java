@@ -5,11 +5,14 @@ import io.quarkus.test.junit.main.LaunchResult;
 import io.quarkus.test.junit.main.QuarkusMainTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
+import org.keycloak.cli.oidc.utils.ConfigHandlerExtension;
 
 @QuarkusMainTest
-public class ConfigUseCommandTest extends AbstractConfigCommandTest {
+@ExtendWith(ConfigHandlerExtension.class)
+public class ConfigUseCommandTest {
 
     @Test
     @Launch({ "config", "use", "--context=context3" })

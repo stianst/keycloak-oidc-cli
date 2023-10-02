@@ -3,6 +3,7 @@ package org.keycloak.cli.oidc.oidc.flows;
 import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.http.MimeType;
+import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.OpenIDGrantTypes;
 import org.keycloak.cli.oidc.oidc.OpenIDParams;
 import org.keycloak.cli.oidc.oidc.OpenIDScopes;
@@ -11,7 +12,6 @@ import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenRequestFailure;
 import org.keycloak.cli.oidc.oidc.representations.DeviceAuthorizationResponse;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
-import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -21,14 +21,14 @@ public class DeviceFlow extends AbstractFlow {
     private static final long DEFAULT_POOL_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final long MAX_WAIT = TimeUnit.MINUTES.toMillis(5);
 
-    public DeviceFlow(Context configuration, WellKnown wellKnown) {
-        super(configuration, wellKnown);
+    public DeviceFlow(Context configuration, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+        super(configuration, wellKnownSupplier);
     }
 
     public TokenResponse execute() throws OpenIDException {
         DeviceAuthorizationResponse deviceAuthorizationResponse = null;
         try {
-            deviceAuthorizationResponse = clientRequest(wellKnown.getDeviceAuthorizationEndpoint())
+            deviceAuthorizationResponse = clientRequest(wellKnownSupplier.get().getDeviceAuthorizationEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
@@ -60,7 +60,7 @@ public class DeviceFlow extends AbstractFlow {
 
             TokenResponse tokenResponse;
             try {
-                tokenResponse = clientRequest(wellKnown.getTokenEndpoint())
+                tokenResponse = clientRequest(wellKnownSupplier.get().getTokenEndpoint())
                         .contentType(MimeType.FORM)
                         .accept(MimeType.JSON)
                         .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.DEVICE_CODE)

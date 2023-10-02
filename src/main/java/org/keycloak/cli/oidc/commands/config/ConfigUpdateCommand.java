@@ -1,6 +1,6 @@
 package org.keycloak.cli.oidc.commands.config;
 
-import org.keycloak.cli.oidc.commands.Error;
+import org.keycloak.cli.oidc.commands.CommandFailedException;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
@@ -22,7 +22,7 @@ public class ConfigUpdateCommand extends AbstractConfigUpdaterCommandAbstract im
 
             configHandler.set(context).save();
         } catch (ConfigException e) {
-            Error.onError(e);
+            throw new CommandFailedException(e);
         }
     }
 

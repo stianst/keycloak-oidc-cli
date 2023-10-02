@@ -5,13 +5,16 @@ import io.quarkus.test.junit.main.LaunchResult;
 import io.quarkus.test.junit.main.QuarkusMainTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.oidc.OpenIDFlow;
+import org.keycloak.cli.oidc.utils.ConfigHandlerExtension;
 
 @QuarkusMainTest
-public class ConfigUpdateCommandTest extends AbstractConfigCommandTest {
+@ExtendWith(ConfigHandlerExtension.class)
+public class ConfigUpdateCommandTest {
 
     @Test
     @Launch(value = { "config", "update",

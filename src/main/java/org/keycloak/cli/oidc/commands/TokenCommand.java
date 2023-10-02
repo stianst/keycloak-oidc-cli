@@ -59,7 +59,7 @@ public class TokenCommand implements Runnable {
                 User.cli().print(token);
             }
         } catch (Exception e) {
-            Error.onError(e);
+            throw new CommandFailedException(e);
         }
     }
 

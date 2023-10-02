@@ -20,35 +20,28 @@ import java.io.IOException;
 public class OpenIDClient {
 
     private Context context;
-    private WellKnown wellKnown;
+
+    private WellKnownSupplier wellKnownSupplier;
 
     public OpenIDClient(Context context) throws OpenIDException {
         this.context = context;
-
-        try {
-            wellKnown = Http.create(context.getIssuer() + "/.well-known/openid-configuration")
-                    .userAgent("kc-oidc/1.0")
-                    .accept(MimeType.JSON)
-                    .asObject(WellKnown.class);
-        } catch (IOException e) {
-            throw new OpenIDException("Failed to retrieve well-known endpoint", e);
-        }
+        this.wellKnownSupplier = new WellKnownSupplier();
     }
 
     public TokenResponse tokenRequest() throws OpenIDException {
         AbstractFlow flow;
         switch (context.getFlow()) {
             case AUTHORIZATION_CODE:
-                flow = new AuthorizationCodeFlow(context, wellKnown);
+                flow = new AuthorizationCodeFlow(context, wellKnownSupplier);
                 break;
             case RESOURCE_OWNER:
-                flow = new ResourceOwnerFlow(context, wellKnown);
+                flow = new ResourceOwnerFlow(context, wellKnownSupplier);
                 break;
             case DEVICE:
-                flow = new DeviceFlow(context, wellKnown);
+                flow = new DeviceFlow(context, wellKnownSupplier);
                 break;
             case CLIENT_CREDENTIAL:
-                flow = new ClientCredentialFlow(context, wellKnown);
+                flow = new ClientCredentialFlow(context, wellKnownSupplier);
                 break;
             default:
                 throw new RuntimeException("Unknown flow");
@@ -59,13 +52,13 @@ public class OpenIDClient {
     }
 
     public TokenResponse refreshRequest(String refreshToken) throws OpenIDException {
-        TokenResponse tokenResponse = new RefreshRequest(context, wellKnown)
+        TokenResponse tokenResponse = new RefreshRequest(context, wellKnownSupplier)
                 .execute(refreshToken);
         return checkError(tokenResponse);
     }
 
     public TokenIntrospectionResponse tokenIntrospectionRequest(String token) throws OpenIDException {
-        TokenIntrospectionResponse tokenIntrospectionResponse = new TokenIntrospectionRequest(context, wellKnown)
+        TokenIntrospectionResponse tokenIntrospectionResponse = new TokenIntrospectionRequest(context, wellKnownSupplier)
                 .execute(token);
         return tokenIntrospectionResponse;
     }
@@ -75,6 +68,25 @@ public class OpenIDClient {
             throw new OpenIDException("Token request failed: " + tokenResponse.getError());
         }
         return tokenResponse;
+    }
+
+    public class WellKnownSupplier {
+
+        private WellKnown wellKnown;
+
+        public WellKnown get() throws OpenIDException {
+            if (wellKnown == null) {
+                try {
+                    wellKnown = Http.create(context.getIssuer() + "/.well-known/openid-configuration")
+                            .userAgent("kc-oidc/1.0")
+                            .accept(MimeType.JSON)
+                            .asObject(WellKnown.class);
+                } catch (IOException e) {
+                    throw new OpenIDException("Failed to retrieve well-known endpoint", e);
+                }
+            }
+            return wellKnown;
+        }
     }
 
 }
