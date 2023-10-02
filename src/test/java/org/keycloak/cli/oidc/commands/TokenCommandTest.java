@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.junit.main.Launch;
 import io.quarkus.test.junit.main.LaunchResult;
-import io.quarkus.test.junit.main.QuarkusMainLauncher;
 import io.quarkus.test.junit.main.QuarkusMainTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +14,9 @@ import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
 import org.keycloak.cli.oidc.oidc.TokenType;
-import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
-import org.keycloak.cli.oidc.utils.Assert;
 import org.keycloak.cli.oidc.utils.ConfigHandlerExtension;
 import org.keycloak.oidc.mock.FakeJwt;
-
-import java.io.IOException;
 
 @QuarkusMainTest
 @ExtendWith(ConfigHandlerExtension.class)
