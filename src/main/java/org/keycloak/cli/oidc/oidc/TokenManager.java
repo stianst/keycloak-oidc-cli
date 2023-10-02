@@ -28,7 +28,7 @@ public class TokenManager {
     }
 
     public String getToken(TokenType tokenType, boolean offline) throws OpenIDException, ConfigException, TokenManagerException {
-        String savedToken = getSaved(context, tokenType);
+        String savedToken = getSaved(tokenType);
 
         if (isValid(savedToken)) {
             return savedToken;
@@ -73,7 +73,7 @@ public class TokenManager {
         return exp > System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
     }
 
-    private String getSaved(Context context, TokenType tokenType) {
+    public String getSaved(TokenType tokenType) {
         switch (tokenType) {
             case ID:
                 return context.getIdToken();

@@ -20,8 +20,6 @@ public class IntrospectCommand implements Runnable {
     String contextName;
     @CommandLine.Option(names = {"--type"}, description = "Token type to introspect", defaultValue = "access", converter = TokenTypeConverter.class)
     TokenType tokenType;
-    @CommandLine.Option(names = {"--offline"}, description = "Offline mode", defaultValue = "false")
-    boolean offline;
 
     @Override
     public void run() {
@@ -31,7 +29,7 @@ public class IntrospectCommand implements Runnable {
             TokenManager tokenManager = new TokenManager(context, configHandler, new OpenIDClient(context));
 
             if (token == null) {
-                token = tokenManager.getToken(tokenType, offline);
+                token = tokenManager.getSaved(tokenType);
             }
 
             OpenIDClient client = tokenManager.getClient();
