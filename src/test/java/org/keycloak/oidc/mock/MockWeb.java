@@ -3,10 +3,7 @@ package org.keycloak.oidc.mock;
 import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.http.client.Http;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 

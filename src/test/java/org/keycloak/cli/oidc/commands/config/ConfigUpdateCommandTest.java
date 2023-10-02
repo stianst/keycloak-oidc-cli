@@ -37,18 +37,24 @@ public class ConfigUpdateCommandTest {
     @Test
     @Launch(value = { "config", "update",
             "--context=context3",
-            "--issuer=null",
-            "--flow=null",
-            "--client-id=null",
-            "--store-tokens=null"
+            "--client-id=null"
     })
     public void testClearFields(LaunchResult result) throws ConfigException {
         ConfigHandler.get().reload();
         Context c = ConfigHandler.get().getContext("context3");
-        Assertions.assertNull(c.getIssuer());
-        Assertions.assertNull(c.getFlow());
         Assertions.assertNull(c.getClientId());
-        Assertions.assertNull(c.isStoreTokens());
+    }
+
+    @Test
+    @Launch(value = { "config", "update",
+            "--context=context3",
+            "--issuer=null"
+    }, exitCode = 1)
+    public void testTryToClearIss(LaunchResult result) throws ConfigException {
+        ConfigHandler.get().reload();
+        Context c = ConfigHandler.get().getContext("context3");
+        Assertions.assertNotNull(c.getIssuer());
+        Assertions.assertEquals("Can't clear required field", result.getErrorStream().get(0));
     }
 
 }

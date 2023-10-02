@@ -1,14 +1,9 @@
 package org.keycloak.oidc.mock;
 
 import org.junit.jupiter.api.Assertions;
-import org.keycloak.cli.oidc.http.HttpHeaders;
 import org.keycloak.cli.oidc.http.HttpMethods;
-import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
-import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.OpenIDParams;
-import org.keycloak.cli.oidc.oidc.TokenType;
-import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 import java.io.IOException;
 import java.net.URLEncoder;

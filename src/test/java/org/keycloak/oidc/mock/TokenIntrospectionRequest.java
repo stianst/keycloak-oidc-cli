@@ -7,7 +7,6 @@ import org.keycloak.cli.oidc.http.MimeType;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
-import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
 
 import java.io.IOException;

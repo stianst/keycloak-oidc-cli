@@ -10,7 +10,6 @@ import org.keycloak.cli.oidc.commands.config.ConfigCurrentCommandTest;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Environment;
-import org.keycloak.oidc.mock.OpenIDTestProviderExtension;
 
 import java.io.File;
 import java.io.FileOutputStream;
