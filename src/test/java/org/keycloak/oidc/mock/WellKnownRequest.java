@@ -32,6 +32,7 @@ public class WellKnownRequest implements Request {
         wellKnown.setTokenEndpoint(issuerUrl + "/tokens");
         wellKnown.setDeviceAuthorizationEndpoint(issuerUrl + "/authz/device");
         wellKnown.setIntrospectionEndpoint(issuerUrl + "/introspect");
+        wellKnown.setUserinfoEndpoint(issuerUrl + "/userinfo");
         httpRequest.ok(Serializer.get().toBytes(wellKnown), MimeType.JSON);
     }
 }

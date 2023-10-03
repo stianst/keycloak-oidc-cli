@@ -17,6 +17,9 @@ public class WellKnown {
     @JsonProperty("introspection_endpoint")
     private String introspectionEndpoint;
 
+    @JsonProperty("userinfo_endpoint")
+    private String userinfoEndpoint;
+
     public String getAuthorizationEndpoint() {
         return authorizationEndpoint;
     }
@@ -47,5 +50,13 @@ public class WellKnown {
 
     public void setIntrospectionEndpoint(String introspectionEndpoint) {
         this.introspectionEndpoint = introspectionEndpoint;
+    }
+
+    public String getUserinfoEndpoint() {
+        return userinfoEndpoint;
+    }
+
+    public void setUserinfoEndpoint(String userinfoEndpoint) {
+        this.userinfoEndpoint = userinfoEndpoint;
     }
 }

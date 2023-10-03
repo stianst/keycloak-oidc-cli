@@ -23,7 +23,7 @@ public class HttpRequest {
 
     public HttpRequest(Socket socket) throws IOException {
         this.socket = socket;
-        socket.setSoTimeout(1000);
+        socket.setSoTimeout(10000);
 
         HttpRequestReader reader = new HttpRequestReader(socket.getInputStream());
 

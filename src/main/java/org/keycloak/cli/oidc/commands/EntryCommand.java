@@ -12,6 +12,7 @@ import picocli.CommandLine;
         ConfigCommand.class,
         DecodeCommand.class,
         IntrospectCommand.class,
+        UserInfoCommand.class,
         DeleteTokensCommand.class
 })
 public class EntryCommand implements QuarkusApplication {

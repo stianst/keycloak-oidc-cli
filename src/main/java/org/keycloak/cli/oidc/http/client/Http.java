@@ -61,6 +61,11 @@ public class Http implements AutoCloseable {
         return this;
     }
 
+    public Http authorization(String token) {
+        authorization = "Bearer " + token;
+        return this;
+    }
+
     public Http authorization(String username, String password) {
         authorization = "Basic " + new String(Base64.getEncoder().encode((username + ":" + password).getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return this;
@@ -100,7 +105,7 @@ public class Http implements AutoCloseable {
         }
 
         connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setReadTimeout(1000);
+        connection.setReadTimeout(10000);
         if (accept != null) {
             connection.setRequestProperty(HttpHeaders.ACCEPT, accept.toString());
         }
