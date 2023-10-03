@@ -8,6 +8,7 @@ Features include:
 * Supports a range of different OAuth and OpenID Connect flows
 * Decode JWT tokens into a human-readable JSON representation
 * Invoke the providers token introspection endpoint to decode and verify tokens
+* Invoke the providers user-info endpoint to obtain user information from an access token
 * Integration with `kubectl`
 * Token cache
 
