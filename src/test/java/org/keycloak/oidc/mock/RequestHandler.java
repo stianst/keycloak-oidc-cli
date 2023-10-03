@@ -47,6 +47,10 @@ public class RequestHandler extends Thread {
         expectedRequests.add(new TokenIntrospectionRequest(issuerUrl));
     }
 
+    public void expectUserInfoRequest() {
+        expectedRequests.add(new UserInfoRequest(issuerUrl));
+    }
+
     public HttpRequest pollRequest() {
         return actualRequests.poll();
     }

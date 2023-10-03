@@ -11,8 +11,10 @@ import org.keycloak.cli.oidc.oidc.flows.DeviceFlow;
 import org.keycloak.cli.oidc.oidc.flows.RefreshRequest;
 import org.keycloak.cli.oidc.oidc.flows.ResourceOwnerFlow;
 import org.keycloak.cli.oidc.oidc.flows.TokenIntrospectionRequest;
+import org.keycloak.cli.oidc.oidc.flows.UserInfoRequest;
 import org.keycloak.cli.oidc.oidc.representations.TokenIntrospectionResponse;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
+import org.keycloak.cli.oidc.oidc.representations.UserInfoResponse;
 import org.keycloak.cli.oidc.oidc.representations.WellKnown;
 
 import java.io.IOException;
@@ -61,6 +63,12 @@ public class OpenIDClient {
         TokenIntrospectionResponse tokenIntrospectionResponse = new TokenIntrospectionRequest(context, wellKnownSupplier)
                 .execute(token);
         return tokenIntrospectionResponse;
+    }
+
+    public UserInfoResponse userInfoRequest(String token) throws OpenIDException {
+        UserInfoResponse userInfoResponse = new UserInfoRequest(context, wellKnownSupplier)
+                .execute(token);
+        return userInfoResponse;
     }
 
     private TokenResponse checkError(TokenResponse tokenResponse) throws OpenIDException {

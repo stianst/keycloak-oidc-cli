@@ -1,5 +1,6 @@
 package org.keycloak.oidc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,10 @@ import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
+import org.keycloak.cli.oidc.oidc.representations.UserInfoResponse;
 import org.keycloak.cli.oidc.oidc.representations.jwt.Jwt;
+import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
+import org.keycloak.oidc.mock.FakeJwt;
 import org.keycloak.oidc.mock.MockWeb;
 import org.keycloak.oidc.mock.OpenIDTestProviderExtension;
 import org.keycloak.oidc.mock.RequestHandler;
@@ -128,6 +132,30 @@ public class OpenIDClientTest {
         Assertions.assertEquals("urn:ietf:params:oauth:grant-type:device_code", tokenRequest.getBodyParams().get("grant_type"));
         Assertions.assertEquals("openid", tokenRequest.getBodyParams().get("scope"));
         assertBasicAuthorization(tokenRequest.getHeaderParams().get(HttpHeaders.AUTHORIZATION), "theclient", "thesecret");
+    }
+
+    @Test
+    public void testUserInfo(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws OpenIDException {
+        Context context = OpenIDTestUtils.createContext(issuerUrl, OpenIDFlow.DEVICE);
+        OpenIDClient client = new OpenIDClient(context);
+
+        requestHandler.expectWellKnown();
+        requestHandler.expectUserInfoRequest();
+
+        FakeJwt fakeJwt = new FakeJwt(issuerUrl, new ObjectMapper());
+
+        JwtClaims claims = new JwtClaims();
+        claims.setSub("thesub");
+        claims.getClaims().put("name", "thename");
+        claims.getClaims().put("preferred_username", "thepreferredusername");
+        claims.getClaims().put("random", "therandom");
+        String token = fakeJwt.create(TokenType.ACCESS, claims);
+
+        UserInfoResponse userInfoResponse = client.userInfoRequest(token);
+        Assertions.assertEquals("thesub", userInfoResponse.getSub());
+        Assertions.assertEquals("thename", userInfoResponse.getName());
+        Assertions.assertEquals("thepreferredusername", userInfoResponse.getPreferredUsername());
+        Assertions.assertEquals("therandom", userInfoResponse.getClaims().get("random"));
     }
 
     private Jwt parse(String token) {
