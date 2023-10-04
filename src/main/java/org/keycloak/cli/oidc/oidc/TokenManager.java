@@ -27,10 +27,10 @@ public class TokenManager {
         return client;
     }
 
-    public String getToken(TokenType tokenType, boolean offline) throws OpenIDException, ConfigException, TokenManagerException {
+    public String getToken(TokenType tokenType, boolean forceRefresh, boolean offline) throws OpenIDException, ConfigException, TokenManagerException {
         String savedToken = getSaved(tokenType);
 
-        if (isValid(savedToken)) {
+        if (!forceRefresh && isValid(savedToken)) {
             return savedToken;
         } else if (offline) {
             if (savedToken == null) {
