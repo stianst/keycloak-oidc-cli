@@ -42,7 +42,7 @@ public class TokenManagerTest {
 
     @Test
     public void testNoSavedOffline() {
-        TokenManagerException exception = Assertions.assertThrows(TokenManagerException.class, () -> tokenManager.getToken(TokenType.ACCESS, true));
+        TokenManagerException exception = Assertions.assertThrows(TokenManagerException.class, () -> tokenManager.getToken(TokenType.ACCESS, false, true));
         Assertions.assertEquals("No cached token", exception.getMessage());
 
         Mockito.verifyNoInteractions(client, configHandler);
@@ -58,9 +58,9 @@ public class TokenManagerTest {
         context.setRefreshToken(refreshToken);
         context.setIdToken(idToken);
 
-        Assertions.assertEquals(refreshToken, tokenManager.getToken(TokenType.REFRESH, true));
-        Assertions.assertEquals(accessToken, tokenManager.getToken(TokenType.ACCESS, true));
-        Assertions.assertEquals(idToken, tokenManager.getToken(TokenType.ID, true));
+        Assertions.assertEquals(refreshToken, tokenManager.getToken(TokenType.REFRESH, false, true));
+        Assertions.assertEquals(accessToken, tokenManager.getToken(TokenType.ACCESS, false, true));
+        Assertions.assertEquals(idToken, tokenManager.getToken(TokenType.ID, false, true));
 
         Mockito.verifyNoInteractions(client, configHandler);
     }
@@ -70,9 +70,9 @@ public class TokenManagerTest {
         TokenResponse tokenResponse = createTokenResponse();
         Mockito.when(client.tokenRequest()).thenReturn(tokenResponse);
 
-        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false));
-        Assertions.assertEquals(tokenResponse.getRefreshToken(), tokenManager.getToken(TokenType.REFRESH, false));
-        Assertions.assertEquals(tokenResponse.getIdToken(), tokenManager.getToken(TokenType.ID, false));
+        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false, false));
+        Assertions.assertEquals(tokenResponse.getRefreshToken(), tokenManager.getToken(TokenType.REFRESH, false, false));
+        Assertions.assertEquals(tokenResponse.getIdToken(), tokenManager.getToken(TokenType.ID, false, false));
 
         Mockito.verify(client, Mockito.times(3)).tokenRequest();
         Mockito.verify(configHandler, Mockito.never()).save();
@@ -85,13 +85,13 @@ public class TokenManagerTest {
         TokenResponse tokenResponse = createTokenResponse();
         Mockito.when(client.tokenRequest()).thenReturn(tokenResponse);
 
-        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false));
+        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false, false));
 
         Assertions.assertEquals(tokenResponse.getRefreshToken(), context.getRefreshToken());
         Assertions.assertEquals(tokenResponse.getAccessToken(), context.getAccessToken());
         Assertions.assertEquals(tokenResponse.getIdToken(), context.getIdToken());
 
-        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false));
+        Assertions.assertEquals(tokenResponse.getAccessToken(), tokenManager.getToken(TokenType.ACCESS, false, false));
 
         Mockito.verify(client, Mockito.times(1)).tokenRequest();
         Mockito.verify(configHandler, Mockito.times(1)).save();
@@ -101,13 +101,13 @@ public class TokenManagerTest {
     @Test
     public void testRefresh() throws OpenIDException, TokenManagerException, ConfigException {
         context.setRefreshToken(createToken(TokenType.REFRESH, false));
-        context.setRefreshToken(createToken(TokenType.ACCESS, true));
-        context.setRefreshToken(createToken(TokenType.ID, false));
+        context.setAccessToken(createToken(TokenType.ACCESS, true));
+        context.setIdToken(createToken(TokenType.ID, false));
 
         TokenResponse response = createTokenResponse();
         Mockito.when(client.refreshRequest(context.getRefreshToken())).thenReturn(response);
 
-        String token = tokenManager.getToken(TokenType.ACCESS, false);
+        String token = tokenManager.getToken(TokenType.ACCESS, false, false);
         Assertions.assertEquals(response.getAccessToken(), token);
 
         Mockito.verify(client, Mockito.times(1)).refreshRequest(context.getRefreshToken());
@@ -117,15 +117,70 @@ public class TokenManagerTest {
     @Test
     public void testRefreshExpiredRefresh() throws OpenIDException, TokenManagerException, ConfigException {
         context.setRefreshToken(createToken(TokenType.REFRESH, true));
-        context.setRefreshToken(createToken(TokenType.ACCESS, true));
-        context.setRefreshToken(createToken(TokenType.ID, true));
+        context.setAccessToken(createToken(TokenType.ACCESS, true));
+        context.setIdToken(createToken(TokenType.ID, true));
 
         TokenResponse response = createTokenResponse();
         Mockito.when(client.tokenRequest()).thenReturn(response);
 
-        String token = tokenManager.getToken(TokenType.ACCESS, false);
+        String token = tokenManager.getToken(TokenType.ACCESS, false, false);
         Assertions.assertEquals(response.getAccessToken(), token);
 
+        Mockito.verify(client, Mockito.times(1)).tokenRequest();
+        Mockito.verifyNoMoreInteractions(client, configHandler);
+    }
+
+    @Test
+    public void testCached() throws OpenIDException, TokenManagerException, ConfigException {
+        context.setRefreshToken(createToken(TokenType.REFRESH, false));
+        context.setAccessToken(createToken(TokenType.ACCESS, false));
+        context.setIdToken(createToken(TokenType.ID, false));
+
+        String token = tokenManager.getToken(TokenType.ACCESS, false, false);
+        Assertions.assertEquals(context.getAccessToken(), token);
+
+        String token2 = tokenManager.getToken(TokenType.ACCESS, false, false);
+        Assertions.assertEquals(token, token2);
+
+        Mockito.verifyNoMoreInteractions(client, configHandler);
+    }
+
+    @Test
+    public void testCachedForceRefresh() throws OpenIDException, TokenManagerException, ConfigException {
+        context.setRefreshToken(createToken(TokenType.REFRESH, false));
+        context.setAccessToken(createToken(TokenType.ACCESS, false));
+        context.setIdToken(createToken(TokenType.ID, false));
+
+        TokenResponse response = createTokenResponse();
+        Mockito.when(client.refreshRequest(context.getRefreshToken())).thenReturn(response);
+
+        String token = tokenManager.getToken(TokenType.ACCESS, true, false);
+
+        Assertions.assertNotEquals(context.getAccessToken(), token);
+
+        Mockito.verify(client, Mockito.times(1)).refreshRequest(context.getRefreshToken());
+        Mockito.verifyNoMoreInteractions(client, configHandler);
+    }
+
+    @Test
+    public void testCachedForceRefreshWithInvalidRefresh() throws OpenIDException, TokenManagerException, ConfigException {
+        context.setRefreshToken(createToken(TokenType.REFRESH, false));
+        context.setAccessToken(createToken(TokenType.ACCESS, false));
+        context.setIdToken(createToken(TokenType.ID, false));
+
+        TokenResponse response = new TokenResponse();
+        response.setError("invalid");
+
+        Mockito.when(client.refreshRequest(context.getRefreshToken())).thenThrow(new OpenIDException("Invalid token"));
+
+        response = createTokenResponse();
+        Mockito.when(client.tokenRequest()).thenReturn(response);
+
+        String token = tokenManager.getToken(TokenType.ACCESS, true, false);
+
+        Assertions.assertNotEquals(context.getAccessToken(), token);
+
+        Mockito.verify(client, Mockito.times(1)).refreshRequest(context.getRefreshToken());
         Mockito.verify(client, Mockito.times(1)).tokenRequest();
         Mockito.verifyNoMoreInteractions(client, configHandler);
     }

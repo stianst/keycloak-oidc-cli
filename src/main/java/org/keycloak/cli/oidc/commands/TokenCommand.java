@@ -28,6 +28,8 @@ public class TokenCommand implements Runnable {
     boolean offline;
     @CommandLine.Option(names = {"--kubectl"}, description = "Kubectl mode", defaultValue = "false")
     boolean kubectl;
+    @CommandLine.Option(names = {"--refresh"}, description = "Update tokens ", defaultValue = "false")
+    boolean refresh;
 
     @Override
     public void run() {
@@ -67,7 +69,7 @@ public class TokenCommand implements Runnable {
         ConfigHandler configHandler = ConfigHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
         TokenManager tokenManager = new TokenManager(context, configHandler, new OpenIDClient(context));
-        return tokenManager.getToken(tokenType, offline);
+        return tokenManager.getToken(tokenType, refresh, offline);
     }
 
 }
