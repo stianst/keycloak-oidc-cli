@@ -17,6 +17,3 @@ contexts:
   flow: "device"
   client-id: "client3"
   store-tokens: true
-  access-token: "accessasdf"
-  id-token: "idasdfasdf"
-  refresh-token: "refreshasdfasdfasdf"

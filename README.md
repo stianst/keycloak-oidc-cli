@@ -34,7 +34,7 @@ Then move `kc-oidc` to somewhere on the classpath.
 
 ## Configuration
 
-Configuration is stored in `~/.kc/oidc.yaml`, which can be edited manually, but it is more convinient to use the built-in
+Configuration is stored in `~/.kc/kc-oidc-config.yaml`, which can be edited manually, but it is more convinient to use the built-in
 configuration commands.
 
 To create a configuration context use `kc-oidc config set`, for example:
@@ -78,6 +78,14 @@ export KC_OIDC_CONF_FILE=/tmp/kc-oidc-tmp.yaml
 kc-oidc config view
 ```
 
+#### `KC_OIDC_TOKEN_CACHE_FILE`
+
+Specify an alternative token cache file. For example:
+
+```
+export KC_OIDC_TOKEN_CACHE_FILE=/tmp/kc-oidc-tmp-cache.yaml
+```
+
 #### `KC_OIDC_BROWSER_CMD`
 
 Specify an alternative command to open URLs in the system browser. For example:
@@ -106,7 +114,7 @@ To use a different context to the default configuration context use `--context=<
 
 ## Token cache
 
-By default, tokens are cached in `~/.kc/oidc.yaml` within the corresponding configuratino context. To not cache tokens
+By default, tokens are cached in `~/.kc/kc-oidc-tokens.yaml` within the corresponding configuratino context. To not cache tokens
 use `--store-tokens=false` when creating or updating a configuration context. 
 
 

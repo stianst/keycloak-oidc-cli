@@ -1,10 +1,5 @@
 package org.keycloak.cli.oidc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.keycloak.cli.oidc.User;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -13,24 +8,11 @@ public class ConfigHandler {
 
     private static ConfigHandler configHandler;
 
-    private File configFile;
-    private ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+    private YamlFileStore<Config> configStore;
     private Config config;
 
     private ConfigHandler() throws ConfigException {
-        String envConfFile = Environment.getConfFile();
-        if (envConfFile != null) {
-            configFile = new File(envConfFile);
-        } else {
-            File userHome = new File(System.getProperty("user.home"));
-            File homeDir = new File(userHome, ".kc");
-            configFile = new File(homeDir, "oidc.yaml");
-        }
-
-        if (!configFile.getParentFile().isDirectory()) {
-            configFile.getParentFile().mkdirs();
-        }
-
+        configStore = new YamlFileStore<>(Environment.getConfFile(), Config.class);
         reload();
     }
 
@@ -45,12 +27,30 @@ public class ConfigHandler {
         configHandler = null;
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
+    public Context getCurrentContext() throws ConfigException {
+        String current = config.getCurrent();
+        if (current == null || current.isEmpty()) {
+            throw new ConfigException("Default context not set");
+        }
+        return getContext(current);
+    }
+
+    public Context getContext(String name) throws ConfigException {
+        for (Context c : config.getContexts()) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        throw new ConfigException("Context '" + name + "' not found");
+    }
+
     public void reload() throws ConfigException {
         try {
-            if (configFile.isFile()) {
-                config = objectMapper.readValue(configFile, Config.class);
-            }
-
+            config = configStore.reload();
             if (config == null) {
                 config = new Config();
             }
@@ -61,13 +61,17 @@ public class ConfigHandler {
 
     public ConfigHandler save() throws ConfigException {
         try {
-            config.getContexts().sort(Comparator.comparing(Context::getName));
+            if (config.getContexts().isEmpty()) {
+                configStore.delete();
+            } else {
+                config.getContexts().sort(Comparator.comparing(Context::getName));
 
-            if (config.getCurrent() == null && config.getContexts().size() == 1) {
-                config.setCurrent(config.getContexts().get(0).getName());
+                if (config.getCurrent() == null && config.getContexts().size() == 1) {
+                    config.setCurrent(config.getContexts().get(0).getName());
+                }
+
+                configStore.save(config);
             }
-
-            objectMapper.writeValue(configFile, config);
         } catch (IOException e) {
             throw new ConfigException("Failed to save config", e);
         }
@@ -103,99 +107,6 @@ public class ConfigHandler {
             config.setCurrent(null);
         }
         return this;
-    }
-
-    public Context getCurrentContext() throws ConfigException {
-        String current = config.getCurrent();
-        if (current == null || current.isEmpty()) {
-            throw new ConfigException("Default context not set");
-        }
-        return getContext(current);
-    }
-
-    public Context getContext(String name) throws ConfigException {
-        for (Context c : config.getContexts()) {
-            if (c.getName().equals(name)) {
-                return c;
-            }
-        }
-        throw new ConfigException("Context '" + name + "' not found");
-    }
-
-    public void deleteTokens(String name) throws ConfigException {
-        Context context = getContext(name);
-        deleteTokens(context);
-        save();
-    }
-
-    public void deleteTokens() throws ConfigException {
-        for (Context context : config.getContexts()) {
-            deleteTokens(context);
-        }
-        save();
-    }
-
-    private void deleteTokens(Context context) {
-        context.setRefreshToken(null);
-        context.setAccessToken(null);
-        context.setIdToken(null);
-    }
-
-    public void printCurrentContext(boolean brief) throws ConfigException {
-        try {
-            Context context = copy(getContext(config.getCurrent()), brief);
-            User.cli().print(objectMapper.writeValueAsString(context));
-        } catch (IOException e) {
-            throw new ConfigException("Failed to serialize config");
-        }
-    }
-
-    public void printContext(String name, boolean brief) throws ConfigException {
-        Context context = copy(getContext(name), brief);
-        try {
-            User.cli().print(objectMapper.writeValueAsString(context));
-        } catch (IOException e) {
-            throw new ConfigException("Failed to serialize config");
-        }
-    }
-
-    public void printContexts(boolean brief) throws ConfigException {
-        Config config = copy(this.config, brief);
-        try {
-            User.cli().print(objectMapper.writeValueAsString(config));
-        } catch (IOException e) {
-            throw new ConfigException("Failed to serialize config");
-        }
-    }
-
-    private Config copy(Config config, boolean brief) {
-        Config copy = new Config();
-        copy.setCurrent(config.getCurrent());
-        for (Context c : config.getContexts()) {
-            copy.getContexts().add(copy(c, brief));
-        }
-        return copy;
-    }
-
-    private Context copy(Context context, boolean brief) {
-        Context copy = new Context();
-        copy.setName(context.getName());
-        copy.setIssuer(context.getIssuer());
-        copy.setFlow(context.getFlow());
-        if (!brief) {
-            copy.setClientId(context.getClientId());
-            copy.setClientSecret(maskSecret(context.getClientSecret()));
-            copy.setUsername(context.getUsername());
-            copy.setUserPassword(maskSecret(context.getUserPassword()));
-            copy.setRefreshToken(maskSecret(context.getRefreshToken()));
-            copy.setIdToken(maskSecret(context.getIdToken()));
-            copy.setAccessToken(maskSecret(context.getAccessToken()));
-        }
-        return copy;
-    }
-
-    private String maskSecret(String value) {
-        return value != null ? "********" : null;
     }
 
 }

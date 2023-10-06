@@ -5,6 +5,7 @@ import org.keycloak.cli.oidc.commands.converter.OpenIDFlowConverter;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.oidc.OpenIDFlow;
 import picocli.CommandLine;
 
@@ -39,6 +40,7 @@ public class ConfigUpdateCommand implements Runnable {
     public void run() {
         try {
             ConfigHandler configHandler = ConfigHandler.get();
+            TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
             Context context = ConfigHandler.get().getContext(this.context);
 
             if (iss != null) {
@@ -50,9 +52,7 @@ public class ConfigUpdateCommand implements Runnable {
             if (storeTokens != null) {
                 context.setStoreTokens(storeTokens);
                 if (!storeTokens) {
-                    context.setRefreshToken(null);
-                    context.setAccessToken(null);
-                    context.setIdToken(null);
+                    tokenCacheHandler.deleteTokens(context);
                 }
             }
 
@@ -70,7 +70,7 @@ public class ConfigUpdateCommand implements Runnable {
             }
 
             configHandler.set(context).save();
-        } catch (ConfigException e) {
+        } catch (Exception e) {
             throw new CommandFailedException(e);
         }
     }

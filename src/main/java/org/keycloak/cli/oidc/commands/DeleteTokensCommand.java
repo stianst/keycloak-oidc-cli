@@ -1,7 +1,8 @@
 package org.keycloak.cli.oidc.commands;
 
-import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
+import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "delete-tokens", description = "Deletes cached tokens")
@@ -14,12 +15,14 @@ public class DeleteTokensCommand implements Runnable {
     public void run() {
         try {
             ConfigHandler configHandler = ConfigHandler.get();
+            TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
             if (contextName != null) {
-                configHandler.deleteTokens(contextName);
+                Context context = configHandler.getContext(contextName);
+                tokenCacheHandler.deleteTokens(context);
             } else {
-                configHandler.deleteTokens();
+                tokenCacheHandler.deleteTokens();
             }
-        } catch (ConfigException e) {
+        } catch (Exception e) {
             throw new CommandFailedException(e);
         }
     }

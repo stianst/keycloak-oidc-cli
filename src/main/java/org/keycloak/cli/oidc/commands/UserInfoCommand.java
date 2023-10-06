@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.cli.oidc.User;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.TokenManager;
 import org.keycloak.cli.oidc.oidc.TokenType;
@@ -27,11 +28,12 @@ public class UserInfoCommand implements Runnable {
     public void run() {
         try {
             ConfigHandler configHandler = ConfigHandler.get();
+            TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
             Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
 
             OpenIDClient client = new OpenIDClient(context);
             if (token == null) {
-                TokenManager tokenManager = new TokenManager(context, configHandler, client);
+                TokenManager tokenManager = new TokenManager(context, tokenCacheHandler, client);
                 token = tokenManager.getSaved(TokenType.ACCESS);
             }
 

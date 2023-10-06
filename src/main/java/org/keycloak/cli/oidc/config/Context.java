@@ -23,15 +23,6 @@ public class Context {
     @JsonProperty("user-password")
     private String userPassword;
 
-    @JsonProperty("refresh-token")
-    private String refreshToken;
-
-    @JsonProperty("access-token")
-    private String accessToken;
-
-    @JsonProperty("id-token")
-    private String idToken;
-
     @JsonProperty("store-tokens")
     private Boolean storeTokens;
 
@@ -102,27 +93,4 @@ public class Context {
         this.storeTokens = storeTokens;
     }
 
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public void setIdToken(String idToken) {
-        this.idToken = idToken;
-    }
 }
