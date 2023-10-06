@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheContext;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.http.server.HttpRequest;
 import org.keycloak.cli.oidc.oidc.TokenParser;
 import org.keycloak.cli.oidc.oidc.TokenType;
@@ -34,7 +37,10 @@ public class IntrospectCommandTest {
     private FakeJwt fakeJwt;
 
     @BeforeEach
-    public void before(@ConfigHandlerExtension.Config ConfigHandler configHandler, @OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws ConfigException {
+    public void before(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws ConfigException, TokenCacheException {
+        ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+
         fakeJwt = new FakeJwt(issuerUrl, objectMapper);
 
         accessToken = fakeJwt.create(TokenType.ACCESS);
@@ -42,19 +48,23 @@ public class IntrospectCommandTest {
         idToken = fakeJwt.create(TokenType.ID);
 
         Context context1 = configHandler.getContext("context1");
+        TokenCacheContext tokenCacheContext1 = tokenCacheHandler.getTokenCacheContext(context1);
         context1.setIssuer(issuerUrl);
-        context1.setAccessToken(fakeJwt.create(TokenType.ACCESS, true));
+        tokenCacheContext1.setAccessToken(fakeJwt.create(TokenType.ACCESS, true));
 
         Context context2 = configHandler.getCurrentContext();
+        TokenCacheContext tokenCacheContext2 = tokenCacheHandler.getTokenCacheContext(context2);
         context2.setIssuer(issuerUrl);
-        context2.setAccessToken(accessToken);
-        context2.setIdToken(idToken);
+        tokenCacheContext2.setAccessToken(accessToken);
+        tokenCacheContext2.setIdToken(idToken);
 
         Context context3 = configHandler.getContext("context3");
+        TokenCacheContext tokenCacheContext3 = tokenCacheHandler.getTokenCacheContext(context3);
         context3.setIssuer(issuerUrl);
-        context3.setAccessToken(accessToken2);
+        tokenCacheContext3.setAccessToken(accessToken2);
 
         configHandler.save();
+        tokenCacheHandler.save();
 
         requestHandler.expectWellKnown();
         requestHandler.expectIntrospectionRequest();

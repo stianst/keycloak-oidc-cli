@@ -6,6 +6,8 @@ import org.keycloak.cli.oidc.commands.converter.TokenTypeConverter;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
 import org.keycloak.cli.oidc.oidc.OpenIDClient;
 import org.keycloak.cli.oidc.oidc.TokenManager;
@@ -65,10 +67,11 @@ public class TokenCommand implements Runnable {
         }
     }
 
-    private String getToken(TokenType tokenType) throws OpenIDException, ConfigException, TokenManagerException {
+    private String getToken(TokenType tokenType) throws OpenIDException, ConfigException, TokenManagerException, TokenCacheException {
         ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
-        TokenManager tokenManager = new TokenManager(context, configHandler, new OpenIDClient(context));
+        TokenManager tokenManager = new TokenManager(context, tokenCacheHandler, new OpenIDClient(context));
         return tokenManager.getToken(tokenType, refresh, offline);
     }
 

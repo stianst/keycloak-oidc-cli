@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.representations.UserInfoResponse;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
@@ -29,7 +31,7 @@ public class UserInfoCommandTest {
     private FakeJwt fakeJwt;
 
     @BeforeEach
-    public void before(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @ConfigHandlerExtension.Config ConfigHandler configHandler, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws ConfigException {
+    public void before(@OpenIDTestProviderExtension.IssuerUrl String issuerUrl, @OpenIDTestProviderExtension.Requests RequestHandler requestHandler) throws ConfigException, TokenCacheException {
         fakeJwt = new FakeJwt(issuerUrl, new ObjectMapper());
 
         JwtClaims claims = new JwtClaims();
@@ -40,11 +42,14 @@ public class UserInfoCommandTest {
 
         token = fakeJwt.create(TokenType.ACCESS, claims);
 
+        ConfigHandler configHandler = ConfigHandler.get();
         Context context = configHandler.getCurrentContext();
         context.setIssuer(issuerUrl);
-        context.setAccessToken(token);
-
         configHandler.save();
+
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+        tokenCacheHandler.getTokenCacheContext(context).setAccessToken(token);
+        tokenCacheHandler.save();
 
         requestHandler.expectWellKnown();
         requestHandler.expectUserInfoRequest();

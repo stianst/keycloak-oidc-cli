@@ -10,6 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheContext;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.utils.ConfigHandlerExtension;
 
 @QuarkusMainTest
@@ -18,50 +21,63 @@ public class DeleteTokensCommandTest {
 
 
     @BeforeEach
-    public void before(@ConfigHandlerExtension.Config ConfigHandler configHandler) throws ConfigException {
+    public void before() throws ConfigException, TokenCacheException {
+        ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+
         Context context2 = configHandler.getContext("context2");
-        context2.setRefreshToken("mytoken");
-        context2.setAccessToken("mytoken");
-        context2.setIdToken("mytoken");
+        TokenCacheContext tokenCacheContext2 = tokenCacheHandler.getTokenCacheContext(context2);
+        tokenCacheContext2.setRefreshToken("mytoken");
+        tokenCacheContext2.setAccessToken("mytoken");
+        tokenCacheContext2.setIdToken("mytoken");
 
         Context context3 = configHandler.getContext("context3");
-        context3.setRefreshToken("mytoken");
-        context3.setAccessToken("mytoken");
-        context3.setIdToken("mytoken");
+        TokenCacheContext tokenCacheContext3 = tokenCacheHandler.getTokenCacheContext(context3);
+        tokenCacheContext3.setRefreshToken("mytoken");
+        tokenCacheContext3.setAccessToken("mytoken");
+        tokenCacheContext3.setIdToken("mytoken");
 
-        configHandler.save();
+        tokenCacheHandler.save();
     }
 
     @Test
     @Launch({ "delete-tokens" })
-    public void testDeleteTokens(@ConfigHandlerExtension.Config ConfigHandler configHandler, LaunchResult result) throws ConfigException {
-        configHandler.reload();
+    public void testDeleteTokens(LaunchResult result) throws TokenCacheException, ConfigException {
+        ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+        tokenCacheHandler.reload();
 
         Context context2 = configHandler.getContext("context2");
-        Assertions.assertNull(context2.getRefreshToken());
-        Assertions.assertNull(context2.getAccessToken());
-        Assertions.assertNull(context2.getIdToken());
+        TokenCacheContext tokenCacheContext2 = tokenCacheHandler.getTokenCacheContext(context2);
+        Assertions.assertNull(tokenCacheContext2.getRefreshToken());
+        Assertions.assertNull(tokenCacheContext2.getAccessToken());
+        Assertions.assertNull(tokenCacheContext2.getIdToken());
 
         Context context3 = configHandler.getContext("context3");
-        Assertions.assertNull(context3.getRefreshToken());
-        Assertions.assertNull(context3.getAccessToken());
-        Assertions.assertNull(context3.getIdToken());
+        TokenCacheContext tokenCacheContext3 = tokenCacheHandler.getTokenCacheContext(context3);
+        Assertions.assertNull(tokenCacheContext3.getRefreshToken());
+        Assertions.assertNull(tokenCacheContext3.getAccessToken());
+        Assertions.assertNull(tokenCacheContext3.getIdToken());
     }
 
     @Test
     @Launch({ "delete-tokens", "--context=context2" })
-    public void testDeleteTokenForSingleContext(@ConfigHandlerExtension.Config ConfigHandler configHandler, LaunchResult result) throws ConfigException {
-        configHandler.reload();
+    public void testDeleteTokenForSingleContext(LaunchResult result) throws ConfigException, TokenCacheException {
+        ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+        tokenCacheHandler.reload();
 
         Context context2 = configHandler.getContext("context2");
-        Assertions.assertNull(context2.getRefreshToken());
-        Assertions.assertNull(context2.getAccessToken());
-        Assertions.assertNull(context2.getIdToken());
+        TokenCacheContext tokenCacheContext2 = tokenCacheHandler.getTokenCacheContext(context2);
+        Assertions.assertNull(tokenCacheContext2.getRefreshToken());
+        Assertions.assertNull(tokenCacheContext2.getAccessToken());
+        Assertions.assertNull(tokenCacheContext2.getIdToken());
 
         Context context3 = configHandler.getContext("context3");
-        Assertions.assertNotNull(context3.getRefreshToken());
-        Assertions.assertNotNull(context3.getAccessToken());
-        Assertions.assertNotNull(context3.getIdToken());
+        TokenCacheContext tokenCacheContext3 = tokenCacheHandler.getTokenCacheContext(context3);
+        Assertions.assertNotNull(tokenCacheContext3.getRefreshToken());
+        Assertions.assertNotNull(tokenCacheContext3.getAccessToken());
+        Assertions.assertNotNull(tokenCacheContext3.getIdToken());
     }
 
 }

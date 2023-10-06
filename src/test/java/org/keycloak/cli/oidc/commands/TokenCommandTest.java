@@ -12,6 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheContext;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
 import org.keycloak.cli.oidc.oidc.TokenType;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
@@ -31,16 +34,21 @@ public class TokenCommandTest {
     private String expectedIdToken2;
 
     @BeforeEach
-    public void before(@ConfigHandlerExtension.Config ConfigHandler configHandler) throws ConfigException {
+    public void before() throws ConfigException, TokenCacheException {
+        ConfigHandler configHandler = ConfigHandler.get();
+        TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
+
         FakeJwt fakeJwt1 = new FakeJwt("http://localhost:8080/context1", objectMapper);
         this.expectedRefreshToken = fakeJwt1.create(TokenType.REFRESH);
         this.expectedAccessToken = fakeJwt1.create(TokenType.ACCESS);
         this.expectedIdToken = fakeJwt1.create(TokenType.ID);
 
         Context currentContext = configHandler.getCurrentContext();
-        currentContext.setRefreshToken(expectedRefreshToken);
-        currentContext.setAccessToken(expectedAccessToken);
-        currentContext.setIdToken(expectedIdToken);
+        TokenCacheContext tokenCacheContext = tokenCacheHandler.getTokenCacheContext(currentContext);
+
+        tokenCacheContext.setRefreshToken(expectedRefreshToken);
+        tokenCacheContext.setAccessToken(expectedAccessToken);
+        tokenCacheContext.setIdToken(expectedIdToken);
 
         FakeJwt fakeJwt2 = new FakeJwt("http://localhost:8080/context2", objectMapper);
         this.expectedRefreshToken2 = fakeJwt2.create(TokenType.REFRESH);
@@ -48,11 +56,13 @@ public class TokenCommandTest {
         this.expectedIdToken2 = fakeJwt2.create(TokenType.ID, true);
 
         Context context3 = configHandler.getContext("context3");
-        context3.setRefreshToken(expectedRefreshToken2);
-        context3.setAccessToken(expectedAccessToken2);
-        context3.setIdToken(expectedIdToken2);
+        TokenCacheContext tokenCacheContext3 = tokenCacheHandler.getTokenCacheContext(context3);
+        tokenCacheContext3.setRefreshToken(expectedRefreshToken2);
+        tokenCacheContext3.setAccessToken(expectedAccessToken2);
+        tokenCacheContext3.setIdToken(expectedIdToken2);
 
         configHandler.save();
+        tokenCacheHandler.save();
     }
 
     @Test

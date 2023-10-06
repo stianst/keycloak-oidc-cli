@@ -29,9 +29,6 @@ public class ConfigUpdateCommandTest {
         Assertions.assertEquals(OpenIDFlow.AUTHORIZATION_CODE, c.getFlow());
         Assertions.assertNotNull(c.getClientId());
         Assertions.assertNotNull(c.isStoreTokens());
-        Assertions.assertNotNull(c.getAccessToken());
-        Assertions.assertNotNull(c.getIdToken());
-        Assertions.assertNotNull(c.getRefreshToken());
     }
 
     @Test

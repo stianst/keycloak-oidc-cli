@@ -1,8 +1,9 @@
 package org.keycloak.cli.oidc.oidc;
 
-import org.keycloak.cli.oidc.config.ConfigException;
-import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
+import org.keycloak.cli.oidc.config.TokenCacheContext;
+import org.keycloak.cli.oidc.config.TokenCacheException;
+import org.keycloak.cli.oidc.config.TokenCacheHandler;
 import org.keycloak.cli.oidc.oidc.exceptions.OpenIDException;
 import org.keycloak.cli.oidc.oidc.exceptions.TokenManagerException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
@@ -13,13 +14,15 @@ import java.util.concurrent.TimeUnit;
 public class TokenManager {
 
     private Context context;
-    private ConfigHandler configHandler;
+    private TokenCacheHandler tokenCacheHandler;
+    private TokenCacheContext tokenCacheContext;
 
     private OpenIDClient client;
 
-    public TokenManager(Context context, ConfigHandler configHandler, OpenIDClient client) {
+    public TokenManager(Context context, TokenCacheHandler tokenCacheHandler, OpenIDClient client) {
         this.context = context;
-        this.configHandler = configHandler;
+        this.tokenCacheHandler = tokenCacheHandler;
+        this.tokenCacheContext = tokenCacheHandler.getTokenCacheContext(context);
         this.client = client;
     }
 
@@ -27,7 +30,7 @@ public class TokenManager {
         return client;
     }
 
-    public String getToken(TokenType tokenType, boolean forceRefresh, boolean offline) throws OpenIDException, ConfigException, TokenManagerException {
+    public String getToken(TokenType tokenType, boolean forceRefresh, boolean offline) throws OpenIDException, TokenCacheException, TokenManagerException {
         String savedToken = getSaved(tokenType);
 
         if (!forceRefresh && isValid(savedToken)) {
@@ -42,7 +45,7 @@ public class TokenManager {
 
         TokenResponse tokenResponse = null;
 
-        String refreshToken = context.getRefreshToken();
+        String refreshToken = tokenCacheContext.getRefreshToken();
         if (isValid(refreshToken)) {
             try {
                 tokenResponse = client.refreshRequest(refreshToken);
@@ -55,10 +58,10 @@ public class TokenManager {
         }
 
         if (context.isStoreTokens() == null || context.isStoreTokens()) {
-            context.setRefreshToken(tokenResponse.getRefreshToken());
-            context.setIdToken(tokenResponse.getIdToken());
-            context.setAccessToken(tokenResponse.getAccessToken());
-            configHandler.save();
+            tokenCacheContext.setRefreshToken(tokenResponse.getRefreshToken());
+            tokenCacheContext.setIdToken(tokenResponse.getIdToken());
+            tokenCacheContext.setAccessToken(tokenResponse.getAccessToken());
+            tokenCacheHandler.save();
         }
 
         return getToken(tokenResponse, tokenType);
@@ -76,11 +79,11 @@ public class TokenManager {
     public String getSaved(TokenType tokenType) {
         switch (tokenType) {
             case ID:
-                return context.getIdToken();
+                return tokenCacheContext.getIdToken();
             case ACCESS:
-                return context.getAccessToken();
+                return tokenCacheContext.getAccessToken();
             case REFRESH:
-                return context.getRefreshToken();
+                return tokenCacheContext.getRefreshToken();
         }
         throw new RuntimeException("Unknown token type");
     }
