@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.keycloak.cli.oidc.oidc.representations.StringOrArrayDeserializer;
+import org.keycloak.cli.oidc.oidc.representations.StringOrArraySerializer;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,7 +24,9 @@ public class JwtClaims {
     private String sub;
 
     @JsonProperty("aud")
-    private String aud;
+    @JsonSerialize(using = StringOrArraySerializer.class)
+    @JsonDeserialize(using = StringOrArrayDeserializer.class)
+    private String[] aud;
 
     @JsonProperty("exp")
     private Long exp;
@@ -52,11 +58,11 @@ public class JwtClaims {
         this.sub = sub;
     }
 
-    public String getAud() {
+    public String[] getAud() {
         return aud;
     }
 
-    public void setAud(String aud) {
+    public void setAud(String[] aud) {
         this.aud = aud;
     }
 
