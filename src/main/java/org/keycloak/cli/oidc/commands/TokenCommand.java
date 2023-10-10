@@ -22,7 +22,7 @@ public class TokenCommand implements Runnable {
 
     @CommandLine.Option(names = {"-c", "--context"}, description = "Context to use")
     String contextName;
-    @CommandLine.Option(names = {"--type"}, description = "Token type to return (access, id, refresh)", converter = TokenTypeConverter.class)
+    @CommandLine.Option(names = {"--type"}, description = "Token type to return (access, id, refresh)", defaultValue = "access", converter = TokenTypeConverter.class)
     TokenType tokenType;
     @CommandLine.Option(names = {"--decode"}, description = "Decode token", defaultValue = "false")
     boolean decode;
@@ -37,10 +37,6 @@ public class TokenCommand implements Runnable {
     public void run() {
         if (!kubectl && System.getenv().containsKey("KUBERNETES_EXEC_INFO")) {
             kubectl = true;
-        }
-
-        if (tokenType == null) {
-            tokenType = kubectl ? TokenType.ID : TokenType.ACCESS;
         }
 
         try {
