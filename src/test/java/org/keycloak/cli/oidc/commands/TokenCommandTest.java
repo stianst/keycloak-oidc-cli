@@ -119,6 +119,18 @@ public class TokenCommandTest {
         Assertions.assertEquals("ExecCredential", credentialRepresentation.getKind());
         Assertions.assertEquals(true, credentialRepresentation.getSpec().isInteractive());
 
+        Assertions.assertEquals(expectedAccessToken, credentialRepresentation.getStatus().getToken());
+        Assertions.assertNull(credentialRepresentation.getStatus().getExpirationTimestamp());
+    }
+    @Test
+    @Launch({ "token", "--kubectl", "--type=id" })
+    public void testKubectlWithIDToken(LaunchResult result) throws JsonProcessingException {
+        String token = result.getOutput();
+        ExecCredentialRepresentation credentialRepresentation = objectMapper.readValue(token, ExecCredentialRepresentation.class);
+        Assertions.assertEquals("client.authentication.k8s.io/v1", credentialRepresentation.getApiVersion());
+        Assertions.assertEquals("ExecCredential", credentialRepresentation.getKind());
+        Assertions.assertEquals(true, credentialRepresentation.getSpec().isInteractive());
+
         Assertions.assertEquals(expectedIdToken, credentialRepresentation.getStatus().getToken());
         Assertions.assertNull(credentialRepresentation.getStatus().getExpirationTimestamp());
     }
