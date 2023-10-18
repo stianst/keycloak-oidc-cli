@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.util.Map;
@@ -34,7 +36,9 @@ public class TokenIntrospectionResponse {
     @JsonProperty("sub")
     private String sub;
     @JsonProperty("aud")
-    private String aud;
+    @JsonSerialize(using = StringOrArraySerializer.class)
+    @JsonDeserialize(using = StringOrArrayDeserializer.class)
+    private String[] aud;
     @JsonProperty("iss")
     private String iss;
     @JsonProperty("jti")
@@ -114,11 +118,11 @@ public class TokenIntrospectionResponse {
         this.sub = sub;
     }
 
-    public String getAud() {
+    public String[] getAud() {
         return aud;
     }
 
-    public void setAud(String aud) {
+    public void setAud(String[] aud) {
         this.aud = aud;
     }
 
