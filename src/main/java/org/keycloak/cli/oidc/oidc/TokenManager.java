@@ -59,6 +59,7 @@ public class TokenManager {
         }
 
         if (context.isStoreTokens() == null || context.isStoreTokens()) {
+            tokenCacheContext.setIssuer(context.getIssuer());
             tokenCacheContext.setClientId(context.getClientId());
             tokenCacheContext.setScope(context.getScope());
             tokenCacheContext.setRefreshToken(tokenResponse.getRefreshToken());
@@ -80,14 +81,13 @@ public class TokenManager {
     }
 
     public String getSaved(TokenType tokenType) {
-        System.out.println("stored client: " + tokenCacheContext.getClientId() + ", requested " + context.getClientId());
-        if (!Objects.equals(tokenCacheContext.getClientId(), context.getClientId())) {
-            System.out.println("stored client differs ignoring");
+        if (!Objects.equals(tokenCacheContext.getIssuer(), context.getIssuer())) {
             return null;
         }
-        System.out.println("stored scope: " + tokenCacheContext.getScope() + ", requested " + context.getScope());
+        if (!Objects.equals(tokenCacheContext.getClientId(), context.getClientId())) {
+            return null;
+        }
         if (!Objects.equals(tokenCacheContext.getScope(), context.getScope())) {
-            System.out.println("stored scope differs ignoring");
             return null;
         }
 

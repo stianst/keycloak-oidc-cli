@@ -10,6 +10,9 @@ public class TokenCacheContext {
 
     private String context;
 
+    @JsonProperty("iss")
+    private String issuer;
+
     @JsonProperty("client-id")
     private String clientId;
 
@@ -31,6 +34,14 @@ public class TokenCacheContext {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
     }
 
     public String getClientId() {
