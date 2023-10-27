@@ -22,7 +22,7 @@ public class ResourceOwnerFlow extends AbstractFlow {
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.PASSWORD)
-                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                    .body(OpenIDParams.SCOPE, context.getScope())
                     .body(OpenIDParams.USERNAME, context.getUsername())
                     .body(OpenIDParams.PASSWORD, context.getUserPassword())
                     .asObject(TokenResponse.class);

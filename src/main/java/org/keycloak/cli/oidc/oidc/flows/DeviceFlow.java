@@ -26,12 +26,12 @@ public class DeviceFlow extends AbstractFlow {
     }
 
     public TokenResponse execute() throws OpenIDException {
-        DeviceAuthorizationResponse deviceAuthorizationResponse = null;
+        DeviceAuthorizationResponse deviceAuthorizationResponse;
         try {
             deviceAuthorizationResponse = clientRequest(wellKnownSupplier.get().getDeviceAuthorizationEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
-                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                    .body(OpenIDParams.SCOPE, context.getScope())
                     .asObject(DeviceAuthorizationResponse.class);
         } catch (IOException e) {
             throw new DeviceAuthorizationRequestFailure(e);
@@ -65,7 +65,7 @@ public class DeviceFlow extends AbstractFlow {
                         .accept(MimeType.JSON)
                         .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.DEVICE_CODE)
                         .body(OpenIDParams.DEVICE_CODE, deviceAuthorizationResponse.getDeviceCode())
-                        .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                        .body(OpenIDParams.SCOPE, context.getScope())
                         .asObject(TokenResponse.class);
             } catch (IOException e) {
                 throw new TokenRequestFailure(e);

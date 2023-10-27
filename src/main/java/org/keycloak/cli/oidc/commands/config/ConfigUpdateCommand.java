@@ -27,6 +27,9 @@ public class ConfigUpdateCommand implements Runnable {
     @CommandLine.Option(names = {"--client-secret"}, description = "Client secret")
     String clientSecret;
 
+    @CommandLine.Option(names = {"--scope"}, description = "Scope")
+    String scope;
+
     @CommandLine.Option(names = {"--user"}, description = "User name for resource-owner flow")
     String user;
 
@@ -67,6 +70,9 @@ public class ConfigUpdateCommand implements Runnable {
             }
             if (password != null) {
                 context.setUserPassword(convertToNull(password));
+            }
+            if (scope != null) {
+                context.setScope(convertToNull(scope));
             }
 
             configHandler.set(context).save();

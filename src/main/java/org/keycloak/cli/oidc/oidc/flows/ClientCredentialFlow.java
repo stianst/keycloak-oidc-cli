@@ -22,7 +22,7 @@ public class ClientCredentialFlow extends AbstractFlow {
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.CLIENT_CREDENTIAL)
-                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                    .body(OpenIDParams.SCOPE, context.getScope())
                     .asObject(TokenResponse.class);
         } catch (Exception e) {
             throw new TokenRequestFailure(e);

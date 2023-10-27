@@ -25,7 +25,8 @@ public class RefreshRequest extends AbstractRequest {
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.REFRESH_TOKEN)
                     .body(OpenIDParams.REFRESH_TOKEN, refreshToken)
-                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+// TODO support different scope
+//                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID + " scope1 scope3")
                     .asObject(TokenResponse.class);
         } catch (IOException e) {
             throw new TokenRequestFailure(e);

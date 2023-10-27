@@ -33,6 +33,14 @@ public class TokenCommand implements Runnable {
     @CommandLine.Option(names = {"--refresh"}, description = "Update tokens ", defaultValue = "false")
     boolean refresh;
 
+    public static void main(String[] args) {
+        TokenCommand tokenCommand = new TokenCommand();
+        tokenCommand.tokenType = TokenType.ACCESS;
+        tokenCommand.decode = true;
+        tokenCommand.refresh = true;
+        tokenCommand.run();
+    }
+
     @Override
     public void run() {
         if (!kubectl && System.getenv().containsKey("KUBERNETES_EXEC_INFO")) {

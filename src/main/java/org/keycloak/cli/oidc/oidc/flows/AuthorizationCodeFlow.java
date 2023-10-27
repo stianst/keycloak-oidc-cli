@@ -46,7 +46,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
         PKCE pkce = PKCE.create();
 
         URI uri = UriBuilder.create(wellKnownSupplier.get().getAuthorizationEndpoint())
-                .query(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                .query(OpenIDParams.SCOPE, context.getScope())
                 .query(OpenIDParams.RESPONSE_TYPE, OpenIDResponseTypes.CODE)
                 .query(OpenIDParams.CLIENT_ID, context.getClientId())
                 .query(OpenIDParams.REDIRECT_URI, redirectUri)
@@ -87,7 +87,7 @@ public class AuthorizationCodeFlow extends AbstractFlow {
                     .accept(MimeType.JSON)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.AUTHORIZATION_CODE)
                     .body(OpenIDParams.CODE, code)
-                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID)
+                    .body(OpenIDParams.SCOPE, context.getScope())
                     .body(OpenIDParams.REDIRECT_URI, redirectUri)
                     .body(OpenIDParams.CODE_VERIFIER, pkce.getCodeVerifier())
                     .asObject(TokenResponse.class);

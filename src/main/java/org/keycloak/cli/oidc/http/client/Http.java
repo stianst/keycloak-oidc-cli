@@ -47,12 +47,16 @@ public class Http implements AutoCloseable {
     }
 
     public Http query(String key, String value) {
-        queryParams.put(key, value);
+        if (value != null && !value.isEmpty()) {
+            queryParams.put(key, value);
+        }
         return this;
     }
 
     public Http body(String key, String value) {
-        bodyParams.put(key, value);
+        if (value != null && !value.isEmpty()) {
+            bodyParams.put(key, value);
+        }
         return this;
     }
 

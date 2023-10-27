@@ -21,7 +21,9 @@ public class UriBuilder {
     }
 
     public UriBuilder query(String key, String value) {
-        queryParams.put(key, value);
+        if (value != null && !value.isEmpty()) {
+            queryParams.put(key, value);
+        }
         return this;
     }
 

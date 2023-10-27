@@ -26,6 +26,9 @@ public class ConfigSetCommand implements Runnable {
     @CommandLine.Option(names = {"--client-secret"}, description = "Client secret")
     String clientSecret;
 
+    @CommandLine.Option(names = {"--scope"}, description = "Scope")
+    String scope;
+
     @CommandLine.Option(names = {"--user"}, description = "User name for resource-owner flow")
     String user;
 
@@ -46,6 +49,7 @@ public class ConfigSetCommand implements Runnable {
         context.setUsername(user);
         context.setUserPassword(password);
         context.setStoreTokens(storeTokens);
+        context.setScope(scope);
 
         try {
             ConfigHandler.get().set(context).save();

@@ -17,6 +17,8 @@ public class Context {
     private String clientId;
     @JsonProperty("client-secret")
     private String clientSecret;
+    @JsonProperty("scope")
+    private String scope;
 
     @JsonProperty("user")
     private String username;
@@ -67,6 +69,14 @@ public class Context {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public String getUsername() {

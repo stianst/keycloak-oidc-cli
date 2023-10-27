@@ -9,6 +9,7 @@ import org.keycloak.cli.oidc.oidc.exceptions.TokenManagerException;
 import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 import org.keycloak.cli.oidc.oidc.representations.jwt.JwtClaims;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TokenManager {
@@ -45,7 +46,7 @@ public class TokenManager {
 
         TokenResponse tokenResponse = null;
 
-        String refreshToken = tokenCacheContext.getRefreshToken();
+        String refreshToken = getSaved(TokenType.REFRESH);
         if (isValid(refreshToken)) {
             try {
                 tokenResponse = client.refreshRequest(refreshToken);
@@ -58,6 +59,8 @@ public class TokenManager {
         }
 
         if (context.isStoreTokens() == null || context.isStoreTokens()) {
+            tokenCacheContext.setClientId(context.getClientId());
+            tokenCacheContext.setScope(context.getScope());
             tokenCacheContext.setRefreshToken(tokenResponse.getRefreshToken());
             tokenCacheContext.setIdToken(tokenResponse.getIdToken());
             tokenCacheContext.setAccessToken(tokenResponse.getAccessToken());
@@ -77,6 +80,17 @@ public class TokenManager {
     }
 
     public String getSaved(TokenType tokenType) {
+        System.out.println("stored client: " + tokenCacheContext.getClientId() + ", requested " + context.getClientId());
+        if (!Objects.equals(tokenCacheContext.getClientId(), context.getClientId())) {
+            System.out.println("stored client differs ignoring");
+            return null;
+        }
+        System.out.println("stored scope: " + tokenCacheContext.getScope() + ", requested " + context.getScope());
+        if (!Objects.equals(tokenCacheContext.getScope(), context.getScope())) {
+            System.out.println("stored scope differs ignoring");
+            return null;
+        }
+
         switch (tokenType) {
             case ID:
                 return tokenCacheContext.getIdToken();

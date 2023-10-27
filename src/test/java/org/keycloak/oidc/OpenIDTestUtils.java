@@ -14,6 +14,7 @@ public class OpenIDTestUtils {
         context.setUsername("theuser");
         context.setUserPassword("thepassword");
         context.setStoreTokens(false);
+        context.setScope("openid");
         return context;
     }
 
