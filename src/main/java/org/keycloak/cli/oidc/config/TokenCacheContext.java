@@ -16,8 +16,11 @@ public class TokenCacheContext {
     @JsonProperty("client-id")
     private String clientId;
 
-    @JsonProperty("scope")
-    private String scope;
+    @JsonProperty("refresh-scope")
+    private String refreshScope;
+
+    @JsonProperty("token-scope")
+    private String tokenScope;
 
     @JsonProperty("refresh-token")
     private String refreshToken;
@@ -52,12 +55,20 @@ public class TokenCacheContext {
         this.clientId = clientId;
     }
 
-    public String getScope() {
-        return scope;
+    public String getRefreshScope() {
+        return refreshScope;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setRefreshScope(String refreshScope) {
+        this.refreshScope = refreshScope;
+    }
+
+    public String getTokenScope() {
+        return tokenScope;
+    }
+
+    public void setTokenScope(String tokenScope) {
+        this.tokenScope = tokenScope;
     }
 
     public String getRefreshToken() {

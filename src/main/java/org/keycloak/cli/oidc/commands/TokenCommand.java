@@ -24,6 +24,8 @@ public class TokenCommand implements Runnable {
     String contextName;
     @CommandLine.Option(names = {"--type"}, description = "Token type to return (access, id, refresh)", defaultValue = "access", converter = TokenTypeConverter.class)
     TokenType tokenType;
+    @CommandLine.Option(names = {"-s", "--scope"}, description = "Request a specific scope")
+    String scope;
     @CommandLine.Option(names = {"--decode"}, description = "Decode token", defaultValue = "false")
     boolean decode;
     @CommandLine.Option(names = {"--offline"}, description = "Offline mode", defaultValue = "false")
@@ -76,7 +78,7 @@ public class TokenCommand implements Runnable {
         TokenCacheHandler tokenCacheHandler = TokenCacheHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
         TokenManager tokenManager = new TokenManager(context, tokenCacheHandler, new OpenIDClient(context));
-        return tokenManager.getToken(tokenType, refresh, offline);
+        return tokenManager.getToken(tokenType, scope, refresh, offline);
     }
 
 }

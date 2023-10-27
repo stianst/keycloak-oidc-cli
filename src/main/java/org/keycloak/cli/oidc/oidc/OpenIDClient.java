@@ -31,19 +31,23 @@ public class OpenIDClient {
     }
 
     public TokenResponse tokenRequest() throws OpenIDException {
+        return tokenRequest(null);
+    }
+
+    public TokenResponse tokenRequest(String scope) throws OpenIDException {
         AbstractFlow flow;
         switch (context.getFlow()) {
             case AUTHORIZATION_CODE:
-                flow = new AuthorizationCodeFlow(context, wellKnownSupplier);
+                flow = new AuthorizationCodeFlow(context, scope, wellKnownSupplier);
                 break;
             case RESOURCE_OWNER:
-                flow = new ResourceOwnerFlow(context, wellKnownSupplier);
+                flow = new ResourceOwnerFlow(context, scope, wellKnownSupplier);
                 break;
             case DEVICE:
-                flow = new DeviceFlow(context, wellKnownSupplier);
+                flow = new DeviceFlow(context, scope, wellKnownSupplier);
                 break;
             case CLIENT_CREDENTIAL:
-                flow = new ClientCredentialFlow(context, wellKnownSupplier);
+                flow = new ClientCredentialFlow(context, scope, wellKnownSupplier);
                 break;
             default:
                 throw new RuntimeException("Unknown flow");
@@ -54,7 +58,11 @@ public class OpenIDClient {
     }
 
     public TokenResponse refreshRequest(String refreshToken) throws OpenIDException {
-        TokenResponse tokenResponse = new RefreshRequest(context, wellKnownSupplier)
+        return refreshRequest(refreshToken, null);
+    }
+
+    public TokenResponse refreshRequest(String refreshToken, String scope) throws OpenIDException {
+        TokenResponse tokenResponse = new RefreshRequest(context, scope, wellKnownSupplier)
                 .execute(refreshToken);
         return checkError(tokenResponse);
     }

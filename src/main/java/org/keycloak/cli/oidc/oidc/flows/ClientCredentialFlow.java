@@ -11,8 +11,8 @@ import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 public class ClientCredentialFlow extends AbstractFlow {
 
-    public ClientCredentialFlow(Context configuration, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
-        super(configuration, wellKnownSupplier);
+    public ClientCredentialFlow(Context configuration, String scope, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+        super(configuration, scope, wellKnownSupplier);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ClientCredentialFlow extends AbstractFlow {
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.CLIENT_CREDENTIAL)
-                    .body(OpenIDParams.SCOPE, context.getScope())
+                    .body(OpenIDParams.SCOPE, getScope())
                     .asObject(TokenResponse.class);
         } catch (Exception e) {
             throw new TokenRequestFailure(e);

@@ -7,10 +7,17 @@ import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 public abstract class AbstractFlow extends AbstractRequest {
 
-    public AbstractFlow(Context context, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+    private String scope;
+
+    public AbstractFlow(Context context, String scope, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
         super(context, wellKnownSupplier);
+        this.scope = scope;
     }
 
     public abstract TokenResponse execute() throws OpenIDException;
+
+    public String getScope() {
+        return scope != null ? scope : context.getScope();
+    }
 
 }

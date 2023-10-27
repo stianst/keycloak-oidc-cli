@@ -21,8 +21,8 @@ public class DeviceFlow extends AbstractFlow {
     private static final long DEFAULT_POOL_INTERVAL = TimeUnit.SECONDS.toMillis(5);
     private static final long MAX_WAIT = TimeUnit.MINUTES.toMillis(5);
 
-    public DeviceFlow(Context configuration, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
-        super(configuration, wellKnownSupplier);
+    public DeviceFlow(Context configuration, String scope, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+        super(configuration, scope, wellKnownSupplier);
     }
 
     public TokenResponse execute() throws OpenIDException {
@@ -31,7 +31,7 @@ public class DeviceFlow extends AbstractFlow {
             deviceAuthorizationResponse = clientRequest(wellKnownSupplier.get().getDeviceAuthorizationEndpoint())
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
-                    .body(OpenIDParams.SCOPE, context.getScope())
+                    .body(OpenIDParams.SCOPE, getScope())
                     .asObject(DeviceAuthorizationResponse.class);
         } catch (IOException e) {
             throw new DeviceAuthorizationRequestFailure(e);
@@ -65,7 +65,7 @@ public class DeviceFlow extends AbstractFlow {
                         .accept(MimeType.JSON)
                         .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.DEVICE_CODE)
                         .body(OpenIDParams.DEVICE_CODE, deviceAuthorizationResponse.getDeviceCode())
-                        .body(OpenIDParams.SCOPE, context.getScope())
+                        .body(OpenIDParams.SCOPE, getScope())
                         .asObject(TokenResponse.class);
             } catch (IOException e) {
                 throw new TokenRequestFailure(e);

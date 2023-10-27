@@ -11,8 +11,8 @@ import org.keycloak.cli.oidc.oidc.representations.TokenResponse;
 
 public class ResourceOwnerFlow extends AbstractFlow {
 
-    public ResourceOwnerFlow(Context configuration, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
-        super(configuration, wellKnownSupplier);
+    public ResourceOwnerFlow(Context configuration, String scope, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+        super(configuration, scope, wellKnownSupplier);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ResourceOwnerFlow extends AbstractFlow {
                     .accept(MimeType.JSON)
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.PASSWORD)
-                    .body(OpenIDParams.SCOPE, context.getScope())
+                    .body(OpenIDParams.SCOPE, getScope())
                     .body(OpenIDParams.USERNAME, context.getUsername())
                     .body(OpenIDParams.PASSWORD, context.getUserPassword())
                     .asObject(TokenResponse.class);

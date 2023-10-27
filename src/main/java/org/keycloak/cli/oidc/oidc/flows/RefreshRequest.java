@@ -14,8 +14,11 @@ import java.io.IOException;
 
 public class RefreshRequest extends AbstractRequest {
 
-    public RefreshRequest(Context configuration, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
+    private String scope;
+
+    public RefreshRequest(Context configuration, String scope, OpenIDClient.WellKnownSupplier wellKnownSupplier) {
         super(configuration, wellKnownSupplier);
+        this.scope = scope;
     }
 
     public TokenResponse execute(String refreshToken) throws OpenIDException {
@@ -25,8 +28,7 @@ public class RefreshRequest extends AbstractRequest {
                     .contentType(MimeType.FORM)
                     .body(OpenIDParams.GRANT_TYPE, OpenIDGrantTypes.REFRESH_TOKEN)
                     .body(OpenIDParams.REFRESH_TOKEN, refreshToken)
-// TODO support different scope
-//                    .body(OpenIDParams.SCOPE, OpenIDScopes.OPENID + " scope1 scope3")
+                    .body(OpenIDParams.SCOPE, scope != null ? scope : context.getScope())
                     .asObject(TokenResponse.class);
         } catch (IOException e) {
             throw new TokenRequestFailure(e);
