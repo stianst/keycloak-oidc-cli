@@ -37,34 +37,34 @@ Then move `kc-oidc` to somewhere on the classpath.
 Configuration is stored in `~/.kc/kc-oidc-config.yaml`, which can be edited manually, but it is more convinient to use the built-in
 configuration commands.
 
-To create a configuration context use `kc-oidc config set`, for example:
+To create a configuration openIDRequest use `kc-oidc config set`, for example:
 
 ```
-kc-oidc config set --context=mycontext --issuer=http://localhost:8080/realms/myrealm --flow=authorization-code --client-id=myclient
+kc-oidc config set --openIDRequest=mycontext --issuer=http://localhost:8080/realms/myrealm --flow=authorization-code --client-id=myclient
 ```
 
-If there are multiple contexts available you can set the current default context with:
+If there are multiple contexts available you can set the current default openIDRequest with:
 
 ```
-kc-oidc config use --context=mycontext
+kc-oidc config use --openIDRequest=mycontext
 ```
 
-The following will view the current default context:
+The following will view the current default openIDRequest:
 
 ```
 kc-oidc config current
 ```
 
-To modify an existing context use `kc-oidc config update`, for example:
+To modify an existing openIDRequest use `kc-oidc config update`, for example:
 
 ```
-kc-oidc config update --context=mycontext --client-id=myotherclient
+kc-oidc config update --openIDRequest=mycontext --client-id=myotherclient
 ```
 
 To unset a config field use `null` as the value:
 
 ```
-kc-oidc config update --context=mycontext --client-id=null
+kc-oidc config update --openIDRequest=mycontext --client-id=null
 ```
 
 ### Environment variables
@@ -97,7 +97,7 @@ kc-oidc token
 
 ## Fetching tokens
 
-After you've created a configuration context simply run:
+After you've created a configuration openIDRequest simply run:
 
 ```
 kc-oidc token
@@ -109,13 +109,13 @@ tokens from the OpenID Connect provider.
 By default, the `Access Token` is printed in it's encoded format. Use `--decode` to view the decoded JWT, or to get the
 `ID Token` use `--type=id`.
 
-To use a different context to the default configuration context use `--context=<context name>`.
+To use a different openIDRequest to the default configuration openIDRequest use `--openIDRequest=<openIDRequest name>`.
 
 
 ## Token cache
 
-By default, tokens are cached in `~/.kc/kc-oidc-tokens.yaml` within the corresponding configuratino context. To not cache tokens
-use `--store-tokens=false` when creating or updating a configuration context. 
+By default, tokens are cached in `~/.kc/kc-oidc-tokens.yaml` within the corresponding configuratino openIDRequest. To not cache tokens
+use `--store-tokens=false` when creating or updating a configuration openIDRequest. 
 
 
 ## Browser support
@@ -149,7 +149,7 @@ Configure credentials for `kubectl` to enable using `kc-oidc` to obtain tokens. 
 kubectl config set-credentials kc-oidc --exec-api-version=client.authentication.k8s.io/v1 --exec-command='kubectl' --exec-arg='kc' --exec-arg='token'
 ```
 
-If you want to use a specific `kc-oidc` configuration context for `kubectl` add `--exec-arg='--context=<context name>' at the
+If you want to use a specific `kc-oidc` configuration openIDRequest for `kubectl` add `--exec-arg='--openIDRequest=<openIDRequest name>' at the
 end of the command above.
 
 `kubectl config set-credentials` doesn't currently allow specifying `interactiveMode`, so you need to edit `.kube/config`, 
@@ -169,11 +169,11 @@ search for `kc-oidc`, and add `interactiveMode: IfAvailable` like shown below:
       interactiveMode: IfAvailable
 ```
 
-Next, you need to create a context entry that uses the previously configured credentials. For example:
+Next, you need to create a openIDRequest entry that uses the previously configured credentials. For example:
 
 ```
-kubectl config set-context kc-oidc --cluster=minikube --user kc-oidc
-kubectl config use-context kc-oidc
+kubectl config set-openIDRequest kc-oidc --cluster=minikube --user kc-oidc
+kubectl config use-openIDRequest kc-oidc
 ```
 
 
