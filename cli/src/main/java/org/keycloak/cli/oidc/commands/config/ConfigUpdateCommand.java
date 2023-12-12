@@ -6,7 +6,7 @@ import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.config.YamlTokenCacheHandler;
-import org.keycloak.client.oauth.OpenIDFlow;
+import org.keycloak.kauth.oauth.OAuthFlow;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "update", description = "Updates values for a configuration context")
@@ -19,7 +19,7 @@ public class ConfigUpdateCommand implements Runnable {
     String iss;
 
     @CommandLine.Option(names = {"--flow"}, description = "Flow (authorization-code, client-credential, device, resource-owner)", converter = OpenIDFlowConverter.class)
-    OpenIDFlow flow;
+    OAuthFlow flow;
 
     @CommandLine.Option(names = {"--client-id"}, description = "Client ID")
     String clientId;

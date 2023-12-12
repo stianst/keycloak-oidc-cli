@@ -1,7 +1,7 @@
 package org.keycloak.cli.oidc.config;
 
-import org.keycloak.client.oauth.TokenCache;
-import org.keycloak.client.oauth.exceptions.TokenCacheException;
+import org.keycloak.kauth.oauth.TokenCache;
+import org.keycloak.kauth.oauth.exceptions.TokenCacheException;
 
 public class TokenCacheWrapper implements TokenCache {
 

@@ -1,6 +1,6 @@
 package org.keycloak.cli.oidc.config;
 
-import org.keycloak.client.oauth.exceptions.TokenCacheException;
+import org.keycloak.kauth.oauth.exceptions.TokenCacheException;
 
 import java.io.IOException;
 import java.util.Iterator;

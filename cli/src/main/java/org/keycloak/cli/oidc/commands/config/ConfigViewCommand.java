@@ -6,7 +6,7 @@ import org.keycloak.cli.oidc.commands.CommandFailedException;
 import org.keycloak.cli.oidc.config.Config;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
-import org.keycloak.client.oauth.User;
+import org.keycloak.kauth.oauth.User;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "view", description = "View all, or a specific, configuration contexts")

@@ -9,14 +9,14 @@ import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.config.TokenCacheWrapper;
 import org.keycloak.cli.oidc.config.YamlTokenCacheHandler;
 import org.keycloak.cli.oidc.kubectl.ExecCredentialRepresentation;
-import org.keycloak.client.oauth.OpenIDClient;
-import org.keycloak.client.oauth.TokenManager;
-import org.keycloak.client.oauth.TokenParser;
-import org.keycloak.client.oauth.TokenType;
-import org.keycloak.client.oauth.User;
-import org.keycloak.client.oauth.exceptions.OpenIDException;
-import org.keycloak.client.oauth.exceptions.TokenCacheException;
-import org.keycloak.client.oauth.exceptions.TokenManagerException;
+import org.keycloak.kauth.oauth.OAuthClient;
+import org.keycloak.kauth.oauth.TokenManager;
+import org.keycloak.kauth.oauth.TokenParser;
+import org.keycloak.kauth.oauth.TokenType;
+import org.keycloak.kauth.oauth.User;
+import org.keycloak.kauth.oauth.exceptions.OpenIDException;
+import org.keycloak.kauth.oauth.exceptions.TokenCacheException;
+import org.keycloak.kauth.oauth.exceptions.TokenManagerException;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "token", description = "Returns a token")
@@ -77,10 +77,13 @@ public class TokenCommand implements Runnable {
 
     private String getToken(TokenType tokenType) throws OpenIDException, ConfigException, TokenManagerException, TokenCacheException {
         ConfigHandler configHandler = ConfigHandler.get();
-        YamlTokenCacheHandler yamlTokenCacheHandler = YamlTokenCacheHandler.get();
         Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
-        TokenCacheWrapper tokenCacheWrapper = new TokenCacheWrapper(yamlTokenCacheHandler, yamlTokenCacheHandler.getTokenCacheContext(context));
-        TokenManager tokenManager = new TokenManager(ContextConverter.toRequest(context), tokenCacheWrapper, new OpenIDClient(ContextConverter.toRequest(context)));
+        TokenCacheWrapper tokenCacheWrapper = null;
+        if (context.isStoreTokens()) {
+            YamlTokenCacheHandler yamlTokenCacheHandler = YamlTokenCacheHandler.get();
+            tokenCacheWrapper = new TokenCacheWrapper(yamlTokenCacheHandler, yamlTokenCacheHandler.getTokenCacheContext(context));
+        }
+        TokenManager tokenManager = new TokenManager(ContextConverter.toRequest(context), tokenCacheWrapper, new OAuthClient(ContextConverter.toRequest(context)));
         return tokenManager.getToken(tokenType, scope, refresh, offline);
     }
 

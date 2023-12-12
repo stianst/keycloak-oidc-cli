@@ -1,12 +1,12 @@
 package org.keycloak.cli.oidc.commands.converter;
 
 import org.keycloak.cli.oidc.config.Context;
-import org.keycloak.client.oauth.OpenIDRequest;
+import org.keycloak.kauth.oauth.OAuthRequest;
 
 public class ContextConverter {
 
-    public static OpenIDRequest toRequest(Context context) {
-        OpenIDRequest request = new OpenIDRequest();
+    public static OAuthRequest toRequest(Context context) {
+        OAuthRequest request = new OAuthRequest();
         request.setIssuer(context.getIssuer());
         request.setClientId(context.getClientId());
         request.setClientSecret(context.getClientSecret());
@@ -14,7 +14,6 @@ public class ContextConverter {
         request.setScope(context.getScope());
         request.setUsername(context.getUsername());
         request.setUserPassword(context.getUserPassword());
-        request.setStoreTokens(context.isStoreTokens());
         return request;
     }
 

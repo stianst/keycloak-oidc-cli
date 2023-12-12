@@ -1,10 +1,10 @@
 package oidc.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.keycloak.client.oauth.OpenIDParams;
-import org.keycloak.client.oauth.TokenType;
-import org.keycloak.client.oauth.representations.jwt.JwtClaims;
-import org.keycloak.client.oauth.representations.jwt.JwtHeader;
+import org.keycloak.kauth.oauth.OAuthParams;
+import org.keycloak.kauth.oauth.TokenType;
+import org.keycloak.kauth.oauth.representations.jwt.JwtClaims;
+import org.keycloak.kauth.oauth.representations.jwt.JwtHeader;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -43,7 +43,7 @@ public class FakeJwt {
         claims.getClaims().put("typ", tokenType.toString());
 
         if (tokenType.equals(TokenType.ID) && NonceHolder.nonce != null) {
-            claims.getClaims().put(OpenIDParams.NONCE, NonceHolder.nonce);
+            claims.getClaims().put(OAuthParams.NONCE, NonceHolder.nonce);
             NonceHolder.nonce = null;
         }
 

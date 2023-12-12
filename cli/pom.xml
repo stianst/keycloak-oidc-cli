@@ -59,7 +59,7 @@
   </dependencies>
 
   <build>
-    <finalName>kc-oidc</finalName>
+    <finalName>kauth</finalName>
     <plugins>
       <plugin>
         <groupId>io.quarkus.platform</groupId>

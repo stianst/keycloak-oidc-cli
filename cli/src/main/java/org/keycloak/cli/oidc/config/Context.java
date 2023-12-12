@@ -3,7 +3,7 @@ package org.keycloak.cli.oidc.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.keycloak.client.oauth.OpenIDFlow;
+import org.keycloak.kauth.oauth.OAuthFlow;
 
 @RegisterForReflection
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -11,7 +11,7 @@ public class Context {
 
     private String name;
     private String issuer;
-    private OpenIDFlow flow;
+    private OAuthFlow flow;
 
     @JsonProperty("client-id")
     private String clientId;
@@ -47,11 +47,11 @@ public class Context {
         this.issuer = issuer;
     }
 
-    public OpenIDFlow getFlow() {
+    public OAuthFlow getFlow() {
         return flow;
     }
 
-    public void setFlow(OpenIDFlow flow) {
+    public void setFlow(OAuthFlow flow) {
         this.flow = flow;
     }
 

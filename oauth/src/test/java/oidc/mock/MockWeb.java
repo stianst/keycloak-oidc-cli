@@ -1,7 +1,7 @@
 package oidc.mock;
 
-import org.keycloak.client.http.Http;
-import org.keycloak.client.oauth.User;
+import org.keycloak.kauth.http.Http;
+import org.keycloak.kauth.oauth.User;
 
 import java.net.URI;
 import java.util.Queue;

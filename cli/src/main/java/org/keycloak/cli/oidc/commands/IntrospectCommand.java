@@ -7,11 +7,11 @@ import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
 import org.keycloak.cli.oidc.config.TokenCacheWrapper;
 import org.keycloak.cli.oidc.config.YamlTokenCacheHandler;
-import org.keycloak.client.oauth.OpenIDClient;
-import org.keycloak.client.oauth.TokenManager;
-import org.keycloak.client.oauth.TokenType;
-import org.keycloak.client.oauth.User;
-import org.keycloak.client.oauth.representations.TokenIntrospectionResponse;
+import org.keycloak.kauth.oauth.OAuthClient;
+import org.keycloak.kauth.oauth.TokenManager;
+import org.keycloak.kauth.oauth.TokenType;
+import org.keycloak.kauth.oauth.User;
+import org.keycloak.kauth.oauth.representations.TokenIntrospectionResponse;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "introspect", description = "Introspects a token using the token introspection endpoint")
@@ -28,11 +28,15 @@ public class IntrospectCommand implements Runnable {
     public void run() {
         try {
             ConfigHandler configHandler = ConfigHandler.get();
-            YamlTokenCacheHandler yamlTokenCacheHandler = YamlTokenCacheHandler.get();
             Context context = contextName != null ? configHandler.getContext(contextName) : configHandler.getCurrentContext();
-            TokenCacheWrapper tokenCacheWrapper = new TokenCacheWrapper(yamlTokenCacheHandler, yamlTokenCacheHandler.getTokenCacheContext(context));
 
-            OpenIDClient client = new OpenIDClient(ContextConverter.toRequest(context));
+            TokenCacheWrapper tokenCacheWrapper = null;
+            if (context.isStoreTokens()) {
+                YamlTokenCacheHandler yamlTokenCacheHandler = YamlTokenCacheHandler.get();
+                tokenCacheWrapper = new TokenCacheWrapper(yamlTokenCacheHandler, yamlTokenCacheHandler.getTokenCacheContext(context));
+            }
+
+            OAuthClient client = new OAuthClient(ContextConverter.toRequest(context));
             if (token == null) {
                 TokenManager tokenManager = new TokenManager(ContextConverter.toRequest(context), tokenCacheWrapper, client);
                 token = tokenManager.getSaved(tokenType);

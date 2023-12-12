@@ -1,7 +1,7 @@
 package oidc.mock;
 
-import org.keycloak.client.http.server.BasicWebServer;
-import org.keycloak.client.http.server.HttpRequest;
+import org.keycloak.kauth.http.server.BasicWebServer;
+import org.keycloak.kauth.http.server.HttpRequest;
 
 import java.net.SocketException;
 import java.util.Queue;

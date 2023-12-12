@@ -1,19 +1,18 @@
 package oidc;
 
-import org.keycloak.client.oauth.OpenIDFlow;
-import org.keycloak.client.oauth.OpenIDRequest;
+import org.keycloak.kauth.oauth.OAuthFlow;
+import org.keycloak.kauth.oauth.OAuthRequest;
 
 public class OpenIDTestUtils {
 
-    public static OpenIDRequest createContext(String issuerUrl, OpenIDFlow flow) {
-        OpenIDRequest context = new OpenIDRequest();
+    public static OAuthRequest createContext(String issuerUrl, OAuthFlow flow) {
+        OAuthRequest context = new OAuthRequest();
         context.setIssuer(issuerUrl);
         context.setFlow(flow);
         context.setClientId("theclient");
         context.setClientSecret("thesecret");
         context.setUsername("theuser");
         context.setUserPassword("thepassword");
-        context.setStoreTokens(false);
         context.setScope("openid");
         return context;
     }

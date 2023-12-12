@@ -1,7 +1,7 @@
 package org.keycloak.cli.oidc.commands;
 
-import org.keycloak.client.oauth.TokenParser;
-import org.keycloak.client.oauth.User;
+import org.keycloak.kauth.oauth.TokenParser;
+import org.keycloak.kauth.oauth.User;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "decode", description = "Converts the base64 encoded JWT into a JSON document")

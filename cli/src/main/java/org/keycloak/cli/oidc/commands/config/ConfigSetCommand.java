@@ -5,7 +5,7 @@ import org.keycloak.cli.oidc.commands.converter.OpenIDFlowConverter;
 import org.keycloak.cli.oidc.config.ConfigException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
-import org.keycloak.client.oauth.OpenIDFlow;
+import org.keycloak.kauth.oauth.OAuthFlow;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "set", description = "Creates a new configuration context")
@@ -18,7 +18,7 @@ public class ConfigSetCommand implements Runnable {
     String iss;
 
     @CommandLine.Option(names = {"--flow"}, description = "Flow (authorization-code, client-credential, device, resource-owner)", required = true, converter = OpenIDFlowConverter.class)
-    OpenIDFlow flow;
+    OAuthFlow flow;
 
     @CommandLine.Option(names = {"--client-id"}, description = "Client ID")
     String clientId;

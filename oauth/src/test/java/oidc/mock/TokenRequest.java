@@ -1,12 +1,12 @@
 package oidc.mock;
 
 import org.junit.jupiter.api.Assertions;
-import org.keycloak.client.http.HttpHeaders;
-import org.keycloak.client.http.HttpMethods;
-import org.keycloak.client.http.MimeType;
-import org.keycloak.client.http.server.HttpRequest;
-import org.keycloak.client.oauth.TokenType;
-import org.keycloak.client.oauth.representations.TokenResponse;
+import org.keycloak.kauth.http.HttpHeaders;
+import org.keycloak.kauth.http.HttpMethods;
+import org.keycloak.kauth.http.MimeType;
+import org.keycloak.kauth.http.server.HttpRequest;
+import org.keycloak.kauth.oauth.TokenType;
+import org.keycloak.kauth.oauth.representations.TokenResponse;
 
 import java.io.IOException;
 

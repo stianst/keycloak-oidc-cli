@@ -1,9 +1,9 @@
 package oidc.mock;
 
 import org.junit.jupiter.api.Assertions;
-import org.keycloak.client.http.HttpMethods;
-import org.keycloak.client.http.server.HttpRequest;
-import org.keycloak.client.oauth.OpenIDParams;
+import org.keycloak.kauth.http.HttpMethods;
+import org.keycloak.kauth.http.server.HttpRequest;
+import org.keycloak.kauth.oauth.OAuthParams;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -20,9 +20,9 @@ public class AuthzRequest implements Request {
     public void processRequest(HttpRequest httpRequest) throws IOException {
         Assertions.assertEquals(HttpMethods.GET, httpRequest.getMethod());
 
-        String redirectUri = httpRequest.getQueryParams().get(OpenIDParams.REDIRECT_URI);
-        String state = httpRequest.getQueryParams().get(OpenIDParams.STATE);
-        String nonce = httpRequest.getQueryParams().get(OpenIDParams.NONCE);
+        String redirectUri = httpRequest.getQueryParams().get(OAuthParams.REDIRECT_URI);
+        String state = httpRequest.getQueryParams().get(OAuthParams.STATE);
+        String nonce = httpRequest.getQueryParams().get(OAuthParams.NONCE);
         NonceHolder.nonce = nonce;
 
         String location = redirectUri + "?code=thecode&state=" + URLEncoder.encode(state, StandardCharsets.UTF_8);

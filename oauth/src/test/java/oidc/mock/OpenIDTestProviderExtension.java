@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import org.keycloak.client.http.server.BasicWebServer;
+import org.keycloak.kauth.http.server.BasicWebServer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

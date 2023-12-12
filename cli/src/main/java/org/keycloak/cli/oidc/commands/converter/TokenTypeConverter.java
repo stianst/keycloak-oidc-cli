@@ -1,6 +1,6 @@
 package org.keycloak.cli.oidc.commands.converter;
 
-import org.keycloak.client.oauth.TokenType;
+import org.keycloak.kauth.oauth.TokenType;
 import picocli.CommandLine;
 
 import java.util.Arrays;

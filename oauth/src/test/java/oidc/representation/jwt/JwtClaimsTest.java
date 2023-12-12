@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.keycloak.client.oauth.representations.jwt.JwtClaims;
+import org.keycloak.kauth.oauth.representations.jwt.JwtClaims;
 
 import java.util.List;
 

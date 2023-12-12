@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.keycloak.cli.oidc.commands.CommandFailedException;
 import org.keycloak.cli.oidc.config.ConfigHandler;
 import org.keycloak.cli.oidc.config.Context;
-import org.keycloak.client.oauth.User;
+import org.keycloak.kauth.oauth.User;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "current", description = "Shows the current default configuration context")

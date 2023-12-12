@@ -1,21 +1,21 @@
 package org.keycloak.cli.oidc.commands.converter;
 
-import org.keycloak.client.oauth.OpenIDFlow;
+import org.keycloak.kauth.oauth.OAuthFlow;
 import picocli.CommandLine;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class OpenIDFlowConverter implements CommandLine.ITypeConverter<OpenIDFlow> {
+public class OpenIDFlowConverter implements CommandLine.ITypeConverter<OAuthFlow> {
     @Override
-    public OpenIDFlow convert(String s) {
+    public OAuthFlow convert(String s) {
         try {
             if (s.equals("null")) {
                 return null;
             }
-            return OpenIDFlow.valueOf(s.toUpperCase().replace('-', '_'));
+            return OAuthFlow.valueOf(s.toUpperCase().replace('-', '_'));
         } catch (IllegalArgumentException e) {
-            throw new CommandLine.TypeConversionException("valid values: " + Arrays.stream(OpenIDFlow.values()).map(t -> t.toString().toLowerCase().replace('_', '-')).collect(Collectors.joining(", ")));
+            throw new CommandLine.TypeConversionException("valid values: " + Arrays.stream(OAuthFlow.values()).map(t -> t.toString().toLowerCase().replace('_', '-')).collect(Collectors.joining(", ")));
         }
     }
 }
